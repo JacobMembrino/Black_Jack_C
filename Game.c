@@ -1,8 +1,8 @@
-#include <stdlib.io>
-#include <random>
-#include <time.ts>
-#include <readchr>
-#include <colorama>
+#include stdlib.io
+#include random
+#include time.ts
+#include readchr
+#include colorama
 
 deal();
 getcard();
@@ -11,7 +11,7 @@ userplay();
 dealerplay();
 scoreboard();
 
-public dict deal() {
+public array[][] deal() {
     //dealer recieves 1 card up, 1 down
     //player recieves 2 cards
     d_card1 = getcard();  //card, color, val, AceGiven
@@ -53,7 +53,7 @@ public list getcard() {
         valf = 'A';
         val = 11; 
         AceGiven = True; }
-    card = "[{valf} {suitchar}]";
+    card = "[{valf} {suitchar}]"; }
     
     //remove duplicate cards using recursion
     if(card not in usedcards) {
@@ -121,6 +121,7 @@ public list user_play(card1_val, card2_val, numAces) {
         else {
             print("Enter a valid action\n"); }
     return(total_val, Busted, Nat21); }
+}
     
 public int dealer_play(card1, card2, numAces) {
     Aces = numAces;
@@ -164,10 +165,11 @@ public int dealer_play(card1, card2, numAces) {
             print("Dealer Busts!\n");
             score = 0;
             break; } }
-    return(score); }
+    return(score); 
+    }
+}
 
-public void scoreboard(u_score, d_score, wins, loses, busts, nat21s) 
-{
+public void scoreboard(u_score, d_score, wins, loses, busts, nat21s) {
     curScores = "User Score: {}, Dealer Score: {}".format(u_score, d_score) ;
     ScoreBoard = "Wins  :{:^8} | Loses:{:^8}\nNat21s:{:^8} | Busts:{:^8}".format(wins, loses, nat21s, busts) ;
 
@@ -181,8 +183,7 @@ public void scoreboard(u_score, d_score, wins, loses, busts, nat21s)
 }
 
 //Gameplay Loop starts here
-public void main() 
-{
+public void main() {
     usedcards = [];
     scoreSheet = [0,0,0,0];
     numAces = [0,0]; //tracks aces for [player, dealer]
@@ -221,9 +222,11 @@ public void main()
             dealer_score = 1;
             scoreSheet[3] += 1;
             scoreSheet[1] += 1;
+        }
         else if(user_score[2]){
             dealer_score = 0;
-            scoreSheet[2]+=1; }
+            scoreSheet[2]+=1;
+        }
         else {
             dealer_score = dealer_play(cards[2], cards[3], numAces[1]);
             if (dealer_score > 0){ //No need to print the score if it busts
@@ -237,30 +240,27 @@ public void main()
                 scoreSheet[1]+=1; }
             else {
                 print("Tie!!\n"); }
-        
+        }
         scoreboard(user_score[0], dealer_score, scoreSheet[0], 
             scoreSheet[1], scoreSheet[3], scoreSheet[2]);
     
         inp1 = '';
         print("\nContinue? (y/n): ");
         inp1 = repr(readchar.readchar());
-        while(inp1 != "b'n'")
-        {
-            if(inp1 == "b'y'")
-            {
+        while(inp1 != "b'n'") {
+            if(inp1 == "b'y'") {
                 print("\nStarting New Game...\n");
                 time.sleep(1);
                 break; 
             }
-            else
-            {
+            else{
                 print("Please enter y/n");
                 inp1 = repr(readchar.readchar()); 
             }
         }
-        if(inp1 == "b'n'")
-        {
+        if(inp1 == "b'n'") {
                 print("Thanks For Playing!\n"); 
                 break;
         }
+    }
 }
