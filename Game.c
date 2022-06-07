@@ -1,33 +1,36 @@
-#include stdlib.io
-#include random
-#include time.ts
-#include readchr
-#include colorama
+#include <stdlib.h>
+#include <stdio.h>
+#include <random>
+#include <time.h>
 
-deal();
-getcard();
-displaycard();
-userplay();
-dealerplay();
-scoreboard();
+char[][] deal();
+char[][] getcard();
+void displaycard(char[] card, char[] color);
+int[] user_play(int card1_val, int card2_val, Boolean numAces);
+int[] dealer_play(char[][] card1, char[][] card2, int numAces);
+void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
+int main(void);
 
-public array[][] deal() {
+char[][] deal() {
     //dealer recieves 1 card up, 1 down
     //player recieves 2 cards
     d_card1 = getcard();  //card, color, val, AceGiven
     d_card2 = getcard();
     p_card1 = getcard();
     p_card2 = getcard();
-    return(p_card1, p_card2, d_card1, d_card2); }
+    return(p_card1, p_card2, d_card1, d_card2); 
+}
 
-public list getcard() {
+char[][] getcard() {
     //random used to generate a face and value of a card in a 52-card deck
-    suit = randint(1, 4);
-    suitchar = '';
-    val = randint(2, 14);
-    valf = str(val);
-    color = '';
-    AceGiven = False; //Used to count aces as 1 or 11
+    int suit = random.randint(1, 4);
+    char[] suitchar = '';
+    int val = random.randint(2, 14);
+    char[] valf = str(val);
+    chra[] color = '';
+    Boolean AceGiven = False; //Used to count aces as 1 or 11
+    char[] card = ''
+
     if(suit==1) {
         suitchar = '\u2660';
         color = 'BLACK'; }
@@ -53,24 +56,26 @@ public list getcard() {
         valf = 'A';
         val = 11; 
         AceGiven = True; }
-    card = "[{valf} {suitchar}]"; }
-    
+    card = "[{valf} {suitchar}]"; 
+
     //remove duplicate cards using recursion
     if(card not in usedcards) {
         usedcards.append(card);
         return(card, color, val, AceGiven); }
     else {
         return(getcard()); }
-    
-public void displaycard(card, color) {
+}
+
+void displaycard(char[] card, char[] color) {
     //display cards (with color)  
     if(color == 'RED') {
         print(f"{Fore.RED}{card}{Style.RESET_ALL}", end='\t'); }
     else {
         print(f"{card}", end='\t'); }
-    return; }
+    return; 
+}
 
-public list user_play(card1_val, card2_val, numAces) {
+int[] user_play(int card1_val, int card2_val, Boolean numAces) {
     Aces = numAces;
     total_val = card1_val + card2_val;
     Nat21 = False;
@@ -123,7 +128,7 @@ public list user_play(card1_val, card2_val, numAces) {
     return(total_val, Busted, Nat21); }
 }
     
-public int dealer_play(card1, card2, numAces) {
+int[] dealer_play(char[][] card1, char[][] card2, int numAces) {
     Aces = numAces;
     score = card1[2] + card2[2];
     print("*"*30);
@@ -169,7 +174,7 @@ public int dealer_play(card1, card2, numAces) {
     }
 }
 
-public void scoreboard(u_score, d_score, wins, loses, busts, nat21s) {
+void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s) {
     curScores = "User Score: {}, Dealer Score: {}".format(u_score, d_score) ;
     ScoreBoard = "Wins  :{:^8} | Loses:{:^8}\nNat21s:{:^8} | Busts:{:^8}".format(wins, loses, nat21s, busts) ;
 
@@ -183,7 +188,7 @@ public void scoreboard(u_score, d_score, wins, loses, busts, nat21s) {
 }
 
 //Gameplay Loop starts here
-public void main() {
+int main(void) {
     usedcards = [];
     scoreSheet = [0,0,0,0];
     numAces = [0,0]; //tracks aces for [player, dealer]
