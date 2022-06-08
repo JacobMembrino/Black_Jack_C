@@ -24,12 +24,12 @@ char[][] deal() {
 char[][] getcard() {
     //random used to generate a face and value of a card in a 52-card deck
     int suit = random.randint(1, 4);
-    char[] suitchar = '';
+    char[4] suitchar = '';
     int val = random.randint(2, 14);
-    char[] valf = str(val);
-    chra[] color = '';
+    char[4] valf = char(val);
+    char[5] color = '';
     Boolean AceGiven = False; //Used to count aces as 1 or 11
-    char[] card = ''
+    char[20] card = '';
 
     if(suit==1) {
         suitchar = '\u2660';
@@ -56,7 +56,7 @@ char[][] getcard() {
         valf = 'A';
         val = 11; 
         AceGiven = True; }
-    card = "[{valf} {suitchar}]"; 
+    card = ("[%s %s]".valf, suitchar); 
 
     //remove duplicate cards using recursion
     if(card not in usedcards) {
@@ -75,7 +75,7 @@ void displaycard(char[] card, char[] color) {
     return; 
 }
 
-int[] user_play(int card1_val, int card2_val, Boolean numAces) {
+int[] user_play(int card1_val, int card2_val, int numAces) {
     Aces = numAces;
     total_val = card1_val + card2_val;
     Nat21 = False;
