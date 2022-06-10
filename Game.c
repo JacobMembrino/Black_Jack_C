@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <random>
 #include <time.h>
 
@@ -10,6 +11,15 @@ int[] user_play(int card1_val, int card2_val, Boolean numAces);
 int[] dealer_play(char[][] card1, char[][] card2, int numAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 int main(void);
+
+//form a struct to hold the characteristics of each card
+static struct {
+    char card[25];
+    char color[6];
+    int val;
+    Boolean AceGiven;
+} CardInfo[40];
+
 
 char[][] deal() {
     //dealer recieves 1 card up, 1 down
@@ -24,25 +34,22 @@ char[][] deal() {
 char[][] getcard() {
     //random used to generate a face and value of a card in a 52-card deck
     int suit = random.randint(1, 4);
-    char[4] suitchar = '';
     int val = random.randint(2, 14);
-    char[4] valf = char(val);
-    char[5] color = '';
-    Boolean AceGiven = False; //Used to count aces as 1 or 11
-    char[20] card = '';
+    char valf = char(val);
+    CardInfo.AceGiven = false;
 
     if(suit==1) {
-        suitchar = '\u2660';
-        color = 'BLACK'; }
+        char suitchar[6] = '\u2660';
+        CardInfo.color = 'BLACK'; }
     else if(suit==2) {
-        suitchar = '\u2665';
-        color = 'RED'; }
+        char suitchar[6] = '\u2665';
+        CardInfo.color = 'RED'; }
     else if(suit==3) {
-        suitchar = '\u2666';
-        color = 'RED'; }
+        char suitchar[6] = '\u2666';
+        CardInfo.color = 'RED'; }
     else {
-        suitchar = '\u2663';
-        color = 'BLACK'; }
+        char suitchar[6] = '\u2663';
+        CardInfo.color = 'BLACK'; }
     if(val==11) {
         valf = 'J';
         val = 10; }
@@ -55,8 +62,8 @@ char[][] getcard() {
     else if(val==14) {
         valf = 'A';
         val = 11; 
-        AceGiven = True; }
-    card = ("[%s %s]".valf, suitchar); 
+        CardInfo.AceGiven = true; }
+    card = "[%s %s]", valf, suitchar; 
 
     //remove duplicate cards using recursion
     if(card not in usedcards) {
@@ -76,16 +83,16 @@ void displaycard(char[] card, char[] color) {
 }
 
 int[] user_play(int card1_val, int card2_val, int numAces) {
-    Aces = numAces;
-    total_val = card1_val + card2_val;
-    Nat21 = False;
-    Busted = False;
+    int Aces = numAces;
+    int total_val = card1_val + card2_val;
+    Boolean Nat21 = false;
+    Boolean Busted = false;
     
     //check for nat 21
     if(total_val == 21){
         time.sleep(1);
         print("\n\nYou Got a Natural 21!!");
-        Nat21 = True;
+        Nat21 = true;
         time.sleep(1);
         return(total_val, Busted, Nat21); }
     
@@ -109,7 +116,7 @@ int[] user_play(int card1_val, int card2_val, int numAces) {
             if(total_val > 21 and Aces == 0) {
                 print(f"\nBUST! ({total_val})\n");
                 time.sleep(1);
-                Busted = True;
+                Busted = true;
                 total_val = 0;
                 break; }
             else if(total_val > 21 and Aces > 0) { //count ace as 1
@@ -121,7 +128,7 @@ int[] user_play(int card1_val, int card2_val, int numAces) {
                 break; }
             else { pass }
         else if(inp == "b's'") {
-            print(f"\nFinal Score: {total_val}\n");
+            printf("\nFinal Score: {total_val}\n");
             break; }
         else {
             print("Enter a valid action\n"); }
@@ -131,14 +138,14 @@ int[] user_play(int card1_val, int card2_val, int numAces) {
 int[] dealer_play(char[][] card1, char[][] card2, int numAces) {
     Aces = numAces;
     score = card1[2] + card2[2];
-    print("*"*30);
+    printf("*"*30);
     time.sleep(1);
-    print("\nDealer's Cards:\n");
+    printf("\nDealer's Cards:\n");
     displaycard(card1[0], card1[1]);
     displaycard(card2[0], card2[1]);
-    print("\n");
-    print("*"*30);
-    print();
+    printf("\n");
+    printf("*"*30);
+    printf();
     time.sleep(1.5);
     
     while(1) {
@@ -202,8 +209,8 @@ int main(void) {
         print("\nDealer's Hand:");
         displaycard(cards[2][0], cards[2][1]);
 
-        if(cards[2][3] == True or cards[3][3] == True) { numAces[1] += 1; }
-        else if(cards[2][3] == True and cards[3][3] == True) { numAces[1] += 2; }
+        if(cards[2][3] == true or cards[3][3] == true) { numAces[1] += 1; }
+        else if(cards[2][3] == true and cards[3][3] == true) { numAces[1] += 2; }
         else { pass; }
 
         print("[? ?]");
@@ -215,8 +222,8 @@ int main(void) {
 
         print("\n");
 
-        if(cards[0][3] == True or cards[1][3] == True) { numAces[0] += 1; }
-        else if(cards[0][3] == True and cards[1][3] == True) { numAces[0] += 2; }
+        if(cards[0][3] == true or cards[1][3] == true) { numAces[0] += 1; }
+        else if(cards[0][3] == true and cards[1][3] == true) { numAces[0] += 2; }
         else{ pass; }
     
         //returns a list containg [score, busted boolean, Nat 21 boolean]
