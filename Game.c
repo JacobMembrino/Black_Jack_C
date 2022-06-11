@@ -63,7 +63,7 @@ char[][] getcard() {
         valf = 'A';
         val = 11; 
         CardInfo.AceGiven = true; }
-    card = "[%s %s]", valf, suitchar; 
+    card = ("[%s %s]", valf, suitchar); 
 
     //remove duplicate cards using recursion
     if(card not in usedcards) {
@@ -97,9 +97,9 @@ int[] user_play(int card1_val, int card2_val, int numAces) {
         return(total_val, Busted, Nat21); }
     
     while(1) {
-        print(f"\nYou may either: Hit (h) or Stand (s) (score:{total_val}): ");
-        inp = repr(readchar.readchar());
-        if(inp == "b'h'")
+        printf("\nYou may either: Hit (h) or Stand (s) (score:{total_val}): ");
+        char inp = scanf();
+        if(inp == 'h')
             {
             print();
             time.sleep(0.5);
@@ -109,7 +109,7 @@ int[] user_play(int card1_val, int card2_val, int numAces) {
             if(disp[3]) {Aces +=1;}
         
             displaycard(disp[0], disp[1]);
-            print();
+            printf();
             time.sleep(1);
             total_val += disp[2];
         
@@ -127,11 +127,11 @@ int[] user_play(int card1_val, int card2_val, int numAces) {
                 time.sleep(1);
                 break; }
             else { pass }
-        else if(inp == "b's'") {
-            printf("\nFinal Score: {total_val}\n");
+        else if(inp == 's') {
+            printf("\nFinal Score: %x\n", total_val);
             break; }
         else {
-            print("Enter a valid action\n"); }
+            printf("Enter a valid action\n"); }
     return(total_val, Busted, Nat21); }
 }
     
