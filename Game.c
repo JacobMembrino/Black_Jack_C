@@ -10,7 +10,6 @@ void displaycard(char[] card, char[] color);
 int[] user_play(int card1_val, int card2_val, Boolean numAces);
 int[] dealer_play(char[][] card1, char[][] card2, int numAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
-int main(void);
 
 //form a struct to hold the characteristics of each card
 static struct {
@@ -18,7 +17,7 @@ static struct {
     char color[6];
     int val;
     Boolean AceGiven;
-} CardInfo[40];
+} CardInfo[50];
 
 
 char[][] deal() {
