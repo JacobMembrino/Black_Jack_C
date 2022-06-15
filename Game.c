@@ -195,35 +195,35 @@ void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int na
 
 //Gameplay Loop starts here
 int main(void) {
-    usedcards = [];
-    scoreSheet = [0,0,0,0];
-    numAces = [0,0]; //tracks aces for [player, dealer]
+    char usedcards[] = [];
+    int scoreSheet[] = [0,0,0,0];
+    int numAces[] = [0,0]; //tracks aces for [player, dealer]
 
     while(1) {
-        usedcards.clear();
-        dealer_score = 0;
-        cards = deal();
+        usedcards[] = [];
+        int dealer_score = 0;
+        char cards[][] = deal();
     
-        print('*'*30);
-        print("\nDealer's Hand:");
+        printf('*'*30);
+        printf("\nDealer's Hand:");
         displaycard(cards[2][0], cards[2][1]);
 
         if(cards[2][3] == true or cards[3][3] == true) { numAces[1] += 1; }
         else if(cards[2][3] == true and cards[3][3] == true) { numAces[1] += 2; }
         else { pass; }
 
-        print("[? ?]");
+        printf("[? ?]");
 
-        print("\n\nPlayer's Hand:");
+        printf("\n\nPlayer's Hand:");
 
         displaycard(cards[0][0], cards[0][1]);
         displaycard(cards[1][0], cards[1][1]);
 
-        print("\n");
+        printf("\n");
 
         if(cards[0][3] == true or cards[1][3] == true) { numAces[0] += 1; }
         else if(cards[0][3] == true and cards[1][3] == true) { numAces[0] += 2; }
-        else{ pass; }
+        else {}
     
         //returns a list containg [score, busted boolean, Nat 21 boolean]
         user_score = user_play(cards[0][2], cards[1][2], numAces[0]);
@@ -240,37 +240,37 @@ int main(void) {
         }
         else {
             dealer_score = dealer_play(cards[2], cards[3], numAces[1]);
-            if (dealer_score > 0){ //No need to print the score if it busts
-                print(f"Dealer's Final Score: {dealer_score}\n");}
+            if (dealer_score > 0) { //No need to print the score if it busts
+                printf("Dealer's Final Score: {dealer_score}\n"); }
 
             if(dealer_score < user_score[0]){
-                print("You Win!\n");
+                printf("You Win!\n");
                 scoreSheet[0]+=1;}
             else if(dealer_score > user_score[0]){
-                print("Dealer Wins!\n");
+                printf("Dealer Wins!\n");
                 scoreSheet[1]+=1; }
             else {
-                print("Tie!!\n"); }
+                printf("Tie!!\n"); }
         }
         scoreboard(user_score[0], dealer_score, scoreSheet[0], 
             scoreSheet[1], scoreSheet[3], scoreSheet[2]);
     
-        inp1 = '';
-        print("\nContinue? (y/n): ");
-        inp1 = repr(readchar.readchar());
-        while(inp1 != "b'n'") {
-            if(inp1 == "b'y'") {
-                print("\nStarting New Game...\n");
+        char inp1 = '';
+        printf("\nContinue? (y/n): ");
+        inp1 = scanf();
+        while(inp1 != 'n') {
+            if(inp1 == 'y') {
+                printf("\nStarting New Game...\n");
                 time.sleep(1);
                 break; 
             }
             else{
-                print("Please enter y/n");
-                inp1 = repr(readchar.readchar()); 
+                printf("Please enter y/n");
+                inp1 = scanf(); 
             }
         }
-        if(inp1 == "b'n'") {
-                print("Thanks For Playing!\n"); 
+        if(inp1 == 'n') {
+                printf("Thanks For Playing!\n"); 
                 break;
         }
     }
