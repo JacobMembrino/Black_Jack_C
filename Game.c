@@ -1,14 +1,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <random>
-#include <time.h>
+#include <stdbool.h>
 
-char[][] deal();
-char[][] getcard();
-void displaycard(char[] card, char[] color);
-int[] user_play(int card1_val, int card2_val, Boolean numAces);
-int[] dealer_play(char[][] card1, char[][] card2, int numAces);
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
+#define int Delay 1000;
+
+char deal[][] ();
+char getcard[][] ();
+void displaycard(char card[], char color[]);
+int user_play[] (int card1_val, int card2_val, bool numAces);
+int dealer_play[] (char card1[][], char card2[][], int numAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 
 //form a struct to hold the characteristics of each card
@@ -16,11 +23,11 @@ static struct {
     char card[25];
     char color[6];
     int val;
-    Boolean AceGiven;
+    bool AceGiven;
 } CardInfo[50];
 
 
-char[][] deal() {
+char deal[][] () {
     //dealer recieves 1 card up, 1 down
     //player recieves 2 cards
     d_card1 = getcard();  //card, color, val, AceGiven
@@ -30,10 +37,10 @@ char[][] deal() {
     return(p_card1, p_card2, d_card1, d_card2); 
 }
 
-char[][] getcard() {
-    //random used to generate a face and value of a card in a 52-card deck
-    int suit = random.randint(1, 4);
-    int val = random.randint(2, 14);
+char getcard[][] () {
+    //rand used to generate a face and value of a card in a 52-card deck
+    int suit = rand() % 2 + 1;
+    int val = rand() % 10 + 2;
     char valf = char(val);
     CardInfo.AceGiven = false;
 
@@ -72,30 +79,48 @@ char[][] getcard() {
         return(getcard()); }
 }
 
-void displaycard(char[] card, char[] color) {
+void displaycard(char card[], char color[]) {
     //display cards (with color)  
-    if(color == 'RED') {
-        print(f"{Fore.RED}{card}{Style.RESET_ALL}", end='\t'); }
-    else {
-        print(f"{card}", end='\t'); }
+    if(color == "RED") 
+    {
+        printf("{Fore.RED}{card}{Style.RESET_ALL}", end='\t'); 
+    }
+    else 
+    {
+        printf("{card}"); 
+    }
     return; 
 }
 
-int[] user_play(int card1_val, int card2_val, int numAces) {
+int user_play[] (int card1_val, int card2_val, int numAces) {
     int Aces = numAces;
     int total_val = card1_val + card2_val;
-    Boolean Nat21 = false;
-    Boolean Busted = false;
+    bool Nat21 = false;
+    bool Busted = false;
     
     //check for nat 21
-    if(total_val == 21){
-        time.sleep(1);
+    if(total_val == 21)
+    {
+        #ifdef _WIN32
+        Sleep(Delay);
+        #else
+        usleep(Delay*1000);  // sleep for 100 milliSeconds
+        #endif
+        
         print("\n\nYou Got a Natural 21!!");
         Nat21 = true;
-        time.sleep(1);
-        return(total_val, Busted, Nat21); }
+        
+        #ifdef _WIN32
+        Sleep(Delay);
+        #else
+        usleep(Delay*1000);  // sleep for 100 milliSeconds
+        #endif
+        
+        return(total_val, Busted, Nat21); 
+    }
     
-    while(1) {
+    while(1) 
+    {
         printf("\nYou may either: Hit (h) or Stand (s) (score:{total_val}): ");
         char inp = getchar();
         printf( "\nYou entered: ");
@@ -103,7 +128,13 @@ int[] user_play(int card1_val, int card2_val, int numAces) {
         if(inp == 'h')
             {
             print();
-            time.sleep(0.5);
+            
+            #ifdef _WIN32
+            Sleep(Delay);
+            #else
+            usleep(Delay*1000);  // sleep for 100 milliSeconds
+            #endif
+        
             disp = getcard(); 
             }
         
@@ -111,88 +142,167 @@ int[] user_play(int card1_val, int card2_val, int numAces) {
         
             displaycard(disp[0], disp[1]);
             printf();
-            time.sleep(1);
+            
+            #ifdef _WIN32
+            Sleep(Delay);
+            #else
+            usleep(Delay*1000);  // sleep for 100 milliSeconds
+            #endif
+        
             total_val += disp[2];
         
             if(total_val > 21 and Aces == 0) {
                 print(f"\nBUST! ({total_val})\n");
-                time.sleep(1);
+                
+                #ifdef _WIN32
+                Sleep(Delay);
+                #else
+                usleep(Delay*1000);  // sleep for 100 milliSeconds
+                #endif
+                
                 Busted = true;
                 total_val = 0;
-                break; }
+                break; 
+            }
             else if(total_val > 21 and Aces > 0) { //count ace as 1
                 Aces -= 1;
                 total_val -= 10; }
             else if(total_val == 21) {
                 print("\nYour Score is 21!!");
-                time.sleep(1);
-                break; }
-            else { pass }
-        else if(inp == 's') {
+                
+                #ifdef _WIN32
+                Sleep(Delay);
+                #else
+                usleep(Delay*1000);  // sleep for 100 milliSeconds
+                #endif
+                break; 
+            }
+            else {}
+            
+        else if(inp == 's') 
+        {
             printf("\nFinal Score: %x\n", total_val);
-            break; }
-        else {
-            printf("Enter a valid action\n"); }
-    return(total_val, Busted, Nat21); }
+            break; 
+        }
+        else 
+        {
+            printf("Enter a valid action\n"); 
+        }
+    return(total_val, Busted, Nat21);
+    }
 }
     
-int[] dealer_play(char[][] card1, char[][] card2, int numAces) {
+int dealer_play[] (char card1[][], char card2[][], int numAces) 
+{
     Aces = numAces;
     score = card1[2] + card2[2];
     printf("*"*30);
-    time.sleep(1);
+    
+    #ifdef _WIN32
+    Sleep(Delay);
+    #else
+    usleep(Delay*1000);  // sleep for 100 milliSeconds
+    #endif
+    
     printf("\nDealer's Cards:\n");
     displaycard(card1[0], card1[1]);
     displaycard(card2[0], card2[1]);
     printf("\n");
     printf("*"*30);
     printf();
-    time.sleep(1.5);
+    
+    #ifdef _WIN32
+    Sleep(Delay);
+    #else
+    usleep(Delay*1000);  // sleep for 100 milliSeconds
+    #endif
     
     while(1) {
         if(score < 21) { //prevents Dealer's score from double printing
             print(f"Dealer's Score: {score}\n"); }
         if(score < 17) {
-            time.sleep(1);
+            
+            #ifdef _WIN32
+            Sleep(Delay);
+            #else
+            usleep(Delay*1000);  // sleep for 100 milliSeconds
+            #endif
+        
             print("Dealer must hit\n");
-            time.sleep(1);
+            
+            #ifdef _WIN32
+            Sleep(Delay);
+            #else
+            usleep(Delay*1000);  // sleep for 100 milliSeconds
+            #endif
+        
             disp = getcard();
             if(disp[3]) { Aces +=1; }
             displaycard(disp[0], disp[1]);
             print("\n");
-            time.sleep(1);
+            
+            #ifdef _WIN32
+            Sleep(Delay);
+            #else
+            usleep(Delay*1000);  // sleep for 100 milliSeconds
+            #endif
+        
             score += disp[2];
+        }
         else if(17<=score<=20) {
-            time.sleep(1);
+            
+            #ifdef _WIN32
+            Sleep(Delay);
+            #else
+            usleep(Delay*1000);  // sleep for 100 milliSeconds
+            #endif
+        
             print("Dealer must stand\n");
-            time.sleep(1);
-            break; }
+            
+            #ifdef _WIN32
+            Sleep(Delay);
+            #else
+            usleep(Delay*1000);  // sleep for 100 milliSeconds
+            #endif
+        
+            break; 
+        }
         else if(score == 21) {
             print("Dealer got 21!\n");
-            time.sleep(1);
-            break; }
+            
+            #ifdef _WIN32
+            Sleep(Delay);
+            #else
+            usleep(Delay*1000);  // sleep for 100 milliSeconds
+            #endif
+            
+            break; 
+        }
         else if(score > 21 and Aces > 0) { //count ace as 1
             Aces -= 1;
-            score -= 10; }
-        else{
+            score -= 10; 
+        }
+        else
+        {
             print("Dealer Busts!\n");
             score = 0;
-            break; } }
+            break; 
+        } 
+    }
     return(score); 
     }
 }
 
-void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s) {
-    curScores = "User Score: {}, Dealer Score: {}".format(u_score, d_score) ;
-    ScoreBoard = "Wins  :{:^8} | Loses:{:^8}\nNat21s:{:^8} | Busts:{:^8}".format(wins, loses, nat21s, busts) ;
+void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s) 
+{
+    char curScores[] = ("User Score: {%d}, Dealer Score: {%d}", u_score, d_score);
+    char scoreBoard[] = ("Wins  :{%d} | Loses:{%d}\nNat21s:{%d} | Busts:{%d}", wins, loses, nat21s, busts);
 
     //scoreboard instance
-    print("{:^}".format('-'*30));
-    print(curScores);
-    print();
-    print(ScoreBoard);
-    print("{:^}".format('-'*30));
-    return(); 
+    printf("------------------------------");
+    printf("%s\n", curScores);
+    printf("%s\n", scoreBoard);
+    printf("------------------------------");
 }
 
 //Gameplay Loop starts here
@@ -256,24 +366,35 @@ int main(void) {
         }
         scoreboard(user_score[0], dealer_score, scoreSheet[0], 
             scoreSheet[1], scoreSheet[3], scoreSheet[2]);
-    
-        char inp1 = '';
+            
         printf("\nContinue? (y/n): ");
         char inp1 = getchar();
         printf( "\nYou entered: ");
         putchar( inp1 );
-        while(inp1 != 'n') {
-            if(inp1 == 'y') {
+        while(inp1 != 'n') 
+        {
+            if(inp1 == 'y') 
+            {
                 printf("\nStarting New Game...\n");
-                time.sleep(1);
+                
+                #ifdef _WIN32
+                Sleep(Delay);
+                #else
+                usleep(Delay*1000);  // sleep for 100 milliSeconds
+                #endif
+                
                 break; 
             }
-            else{
+            else
+            {
                 printf("Please enter y/n");
-                inp1 = scanf(); 
+                char inp1 = getchar();
+                printf( "\nYou entered: ");
+                putchar( inp1 ); 
             }
         }
-        if(inp1 == 'n') {
+        if(inp1 == 'n') 
+        {
                 printf("Thanks For Playing!\n"); 
                 break;
         }
