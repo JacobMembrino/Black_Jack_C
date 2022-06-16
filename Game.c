@@ -97,7 +97,9 @@ int[] user_play(int card1_val, int card2_val, int numAces) {
     
     while(1) {
         printf("\nYou may either: Hit (h) or Stand (s) (score:{total_val}): ");
-        char inp = scanf();
+        char inp = getchar();
+        printf( "\nYou entered: ");
+        putchar( inp );
         if(inp == 'h')
             {
             print();
@@ -257,7 +259,9 @@ int main(void) {
     
         char inp1 = '';
         printf("\nContinue? (y/n): ");
-        inp1 = scanf();
+        char inp1 = getchar();
+        printf( "\nYou entered: ");
+        putchar( inp1 );
         while(inp1 != 'n') {
             if(inp1 == 'y') {
                 printf("\nStarting New Game...\n");
