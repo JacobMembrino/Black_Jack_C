@@ -11,11 +11,22 @@
 
 #define int Delay 1000;
 
-char deal[][] ();
-char getcard[][] ();
-void displaycard(char card[], char color[]);
-int user_play[] (int card1_val, int card2_val, bool numAces);
-int dealer_play[] (char card1[][], char card2[][], int numAces);
+#if defined(_WIN32) || defined(__MSDOS__)
+   #define SPADE   "\x06"
+   #define CLUB    "\x05"
+   #define HEART   "\x03"
+   #define DIAMOND "\x04"
+#else
+   #define SPADE   "\xE2\x99\xA0"
+   #define CLUB    "\xE2\x99\xA3"
+   #define HEART   "\xE2\x99\xA5"
+   #define DIAMOND "\xE2\x99\xA6"
+#endif
+
+char deal**();
+char getcard**();
+int user_play* (int card1_val, int card2_val, bool numAces);
+int dealer_play* (char card1**, char card2**, int numAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 
 //form a struct to hold the characteristics of each card
@@ -27,17 +38,17 @@ static struct {
 } CardInfo[50];
 
 
-char deal[][] () {
+char deal*() {
     //dealer recieves 1 card up, 1 down
     //player recieves 2 cards
-    d_card1 = getcard();  //card, color, val, AceGiven
-    d_card2 = getcard();
-    p_card1 = getcard();
-    p_card2 = getcard();
+    d_card1 = getcard**();  //card, color, val, AceGiven
+    d_card2 = getcard**();
+    p_card1 = getcard**();
+    p_card2 = getcard**();
     return(p_card1, p_card2, d_card1, d_card2); 
 }
 
-char getcard[][] () {
+char getcard**() {
     //rand used to generate a face and value of a card in a 52-card deck
     int suit = rand() % 2 + 1;
     int val = rand() % 10 + 2;
@@ -45,16 +56,16 @@ char getcard[][] () {
     CardInfo.AceGiven = false;
 
     if(suit==1) {
-        char suitchar[6] = '\u2660';
+        char suitchar[6] = SPADE;
         CardInfo.color = 'BLACK'; }
     else if(suit==2) {
-        char suitchar[6] = '\u2665';
+        char suitchar[6] = HEART;
         CardInfo.color = 'RED'; }
     else if(suit==3) {
-        char suitchar[6] = '\u2666';
+        char suitchar[6] = DIAMOND;
         CardInfo.color = 'RED'; }
     else {
-        char suitchar[6] = '\u2663';
+        char suitchar[6] = CLUB;
         CardInfo.color = 'BLACK'; }
     if(val==11) {
         valf = 'J';
@@ -69,30 +80,17 @@ char getcard[][] () {
         valf = 'A';
         val = 11; 
         CardInfo.AceGiven = true; }
-    card = ("[%s %s]", valf, suitchar); 
+    char card[20] = "[%s %s]", valf, suitchar; 
 
     //remove duplicate cards using recursion
     if(card not in usedcards) {
         usedcards.append(card);
         return(card, color, val, AceGiven); }
     else {
-        return(getcard()); }
+        return(getcard**()); }
 }
 
-void displaycard(char card[], char color[]) {
-    //display cards (with color)  
-    if(color == "RED") 
-    {
-        printf("{Fore.RED}{card}{Style.RESET_ALL}", end='\t'); 
-    }
-    else 
-    {
-        printf("{card}"); 
-    }
-    return; 
-}
-
-int user_play[] (int card1_val, int card2_val, int numAces) {
+int user_play* (int card1_val, int card2_val, int numAces) {
     int Aces = numAces;
     int total_val = card1_val + card2_val;
     bool Nat21 = false;
@@ -126,7 +124,7 @@ int user_play[] (int card1_val, int card2_val, int numAces) {
         printf( "\nYou entered: ");
         putchar( inp );
         if(inp == 'h')
-            {
+        {
             print();
             
             #ifdef _WIN32
@@ -135,13 +133,13 @@ int user_play[] (int card1_val, int card2_val, int numAces) {
             usleep(Delay*1000);  // sleep for 100 milliSeconds
             #endif
         
-            disp = getcard(); 
-            }
+            disp* = getcard(); 
+        }
         
             if(disp[3]) {Aces +=1;}
         
-            displaycard(disp[0], disp[1]);
-            printf();
+            //displaycard(disp[0], disp[1]);
+            //printf("{" + card + "}\n"); 
             
             #ifdef _WIN32
             Sleep(Delay);
@@ -192,7 +190,7 @@ int user_play[] (int card1_val, int card2_val, int numAces) {
     }
 }
     
-int dealer_play[] (char card1[][], char card2[][], int numAces) 
+int dealer_play*(char card1**, char card2**, int numAces) 
 {
     Aces = numAces;
     score = card1[2] + card2[2];
@@ -205,8 +203,10 @@ int dealer_play[] (char card1[][], char card2[][], int numAces)
     #endif
     
     printf("\nDealer's Cards:\n");
-    displaycard(card1[0], card1[1]);
-    displaycard(card2[0], card2[1]);
+    //displaycard(card1[0], card1[1]);
+    //printf("{" + card + "}\n"); 
+    //displaycard(card2[0], card2[1]);
+    //printf("{" + card + "}\n");
     printf("\n");
     printf("*"*30);
     printf();
@@ -238,7 +238,8 @@ int dealer_play[] (char card1[][], char card2[][], int numAces)
         
             disp = getcard();
             if(disp[3]) { Aces +=1; }
-            displaycard(disp[0], disp[1]);
+            //displaycard(disp[0], disp[1]);
+            //printf("{" + card + "}\n");
             print("\n");
             
             #ifdef _WIN32
@@ -278,8 +279,9 @@ int dealer_play[] (char card1[][], char card2[][], int numAces)
             
             break; 
         }
-        else if(score > 21 and Aces > 0) { //count ace as 1
-            Aces -= 1;
+        else if(score > 21 and Aces > 0) 
+        { 
+            Aces -= 1; //count ace as 1
             score -= 10; 
         }
         else
@@ -295,43 +297,41 @@ int dealer_play[] (char card1[][], char card2[][], int numAces)
 
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s) 
 {
-    char curScores[] = ("User Score: {%d}, Dealer Score: {%d}", u_score, d_score);
-    char scoreBoard[] = ("Wins  :{%d} | Loses:{%d}\nNat21s:{%d} | Busts:{%d}", wins, loses, nat21s, busts);
-
     //scoreboard instance
     printf("------------------------------");
-    printf("%s\n", curScores);
-    printf("%s\n", scoreBoard);
+    printf("User Score: {%d}, Dealer Score: {%d}\n", u_score, d_score);
+    printf("Wins  :{%d} | Loses:{%d}\nNat21s:{%d} | Busts:{%d}\n", wins, loses, nat21s, busts);
     printf("------------------------------");
 }
 
 //Gameplay Loop starts here
-int main(void) {
-    char usedcards[] = [];
-    int scoreSheet[] = [0,0,0,0];
-    int numAces[] = [0,0]; //tracks aces for [player, dealer]
+int main() {
+    char usedcards** = [\0];
+    int scoreSheet* = [0,0,0,0];
+    int numAces* = [0,0]; //tracks aces for [player, dealer]
 
     while(1) {
         usedcards[] = [];
         int dealer_score = 0;
-        char cards[][] = deal();
+        char cards** = deal();
     
-        printf('*'*30);
+        printf("******************************");
         printf("\nDealer's Hand:");
-        displaycard(cards[2][0], cards[2][1]);
+        //displaycard(cards[2][0], cards[2][1]);
+        //printf("{" + card + "}\n");
 
         if(cards[2][3] == true or cards[3][3] == true) { numAces[1] += 1; }
         else if(cards[2][3] == true and cards[3][3] == true) { numAces[1] += 2; }
-        else { pass; }
+        else {}
 
         printf("[? ?]");
 
         printf("\n\nPlayer's Hand:");
 
-        displaycard(cards[0][0], cards[0][1]);
-        displaycard(cards[1][0], cards[1][1]);
-
-        printf("\n");
+        //displaycard(cards[0][0], cards[0][1]);
+        //printf("{" + card + "}\n");
+        //displaycard(cards[1][0], cards[1][1]);
+        //printf("{" + card + "}\n\n");
 
         if(cards[0][3] == true or cards[1][3] == true) { numAces[0] += 1; }
         else if(cards[0][3] == true and cards[1][3] == true) { numAces[0] += 2; }
