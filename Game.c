@@ -23,19 +23,19 @@
    #define DIAMOND "\xE2\x99\xA6"
 #endif
 
+//form a struct to hold the characteristics of each card
+typedef struct CardInfo {
+    char cardstr[25];
+    int val;
+    bool AceGiven;
+} CardInfo;
+
+
 char deal**();
 char getcard**();
 int user_play* (int card1_val, int card2_val, bool numAces);
 int dealer_play* (char card1**, char card2**, int numAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
-
-//form a struct to hold the characteristics of each card
-static struct {
-    char card[25];
-    char color[6];
-    int val;
-    bool AceGiven;
-} CardInfo[50];
 
 
 char deal*() {
@@ -53,41 +53,59 @@ char getcard**() {
     int suit = rand() % 2 + 1;
     int val = rand() % 10 + 2;
     char valf = char(val);
-    CardInfo.AceGiven = false;
+    Cardinfo card;
+    card.AceGiven = false;
 
-    if(suit==1) {
+    if(suit==1) 
+    {
         char suitchar[6] = SPADE;
-        CardInfo.color = 'BLACK'; }
-    else if(suit==2) {
+    }
+    else if(suit==2) 
+    {
         char suitchar[6] = HEART;
-        CardInfo.color = 'RED'; }
-    else if(suit==3) {
+    }
+    else if(suit==3) 
+    {
         char suitchar[6] = DIAMOND;
-        CardInfo.color = 'RED'; }
-    else {
+    }
+    else 
+    {
         char suitchar[6] = CLUB;
-        CardInfo.color = 'BLACK'; }
-    if(val==11) {
+    }
+    if(val==11) 
+    {
         valf = 'J';
-        val = 10; }
-    else if(val==12) {
+        val = 10; 
+    }
+    else if(val==12) 
+    {
         valf = 'Q';
-        val = 10; }
-    else if(val==13) {
+        val = 10; 
+    }
+    else if(val==13) 
+    {
         valf = 'K';
-        val = 10; }
-    else if(val==14) {
+        val = 10; 
+    }
+    else if(val==14) 
+    {
         valf = 'A';
         val = 11; 
-        CardInfo.AceGiven = true; }
-    char card[20] = "[%s %s]", valf, suitchar; 
+        card.AceGiven = true; 
+    }
+   
+    card.cardstr = ("[%s %s]", valf, suitchar); 
 
     //remove duplicate cards using recursion
-    if(card not in usedcards) {
+    if(card not in usedcards) 
+    {
         usedcards.append(card);
-        return(card, color, val, AceGiven); }
-    else {
-        return(getcard**()); }
+        return(card); 
+    }
+    else 
+    {
+        return(getcard**()); 
+    }
 }
 
 int user_play* (int card1_val, int card2_val, int numAces) {
