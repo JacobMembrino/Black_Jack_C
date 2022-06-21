@@ -31,24 +31,24 @@ typedef struct CardInfo {
 } CardInfo;
 
 
-char deal**();
-char getcard**();
+char deal*();
+void getcard();
 int user_play* (int card1_val, int card2_val, bool numAces);
 int dealer_play* (char card1**, char card2**, int numAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 
 
-char deal*() {
+char deal***() {
     //dealer recieves 1 card up, 1 down
     //player recieves 2 cards
-    d_card1 = getcard**();  //card, color, val, AceGiven
-    d_card2 = getcard**();
-    p_card1 = getcard**();
-    p_card2 = getcard**();
+    d_card1 = getcard();  //card, color, val, AceGiven
+    d_card2 = getcard();
+    p_card1 = getcard();
+    p_card2 = getcard();
     return(p_card1, p_card2, d_card1, d_card2); 
 }
 
-char getcard**() {
+void getcard() {
     //rand used to generate a face and value of a card in a 52-card deck
     int suit = rand() % 2 + 1;
     int val = rand() % 10 + 2;
@@ -93,7 +93,7 @@ char getcard**() {
         val = 11; 
         card.AceGiven = true; 
     }
-   
+    char *card = (char*)malloc(8 * sizeof(char));
     card.cardstr = ("[%s %s]", valf, suitchar); 
 
     //remove duplicate cards using recursion
