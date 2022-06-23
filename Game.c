@@ -25,95 +25,64 @@
 
 //form a struct to hold the characteristics of each card
 typedef struct CardInfo {
-    char cardstr[25];
+    char *face[2];
+    char *suitchar[6];
     int val;
     bool AceGiven;
 } CardInfo;
 
-
-char deal*();
-void getcard();
-int user_play* (int card1_val, int card2_val, bool numAces);
-int dealer_play* (char card1**, char card2**, int numAces);
+CardInfo getcard();
+void displayCard(CardInfo card);
+int *user_play(int card1_val, int card2_val, bool numAces);
+int *dealer_play(char card1**, char card2**, int numAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 int cardNotInUsedCards(char *card, char *arr[]);
 
-int cardNotInUsedCards(char *card, char *arr[]){
-    int i;
-    for(i = 0; i < sizeof(*arr[]); i++){
+int cardNotInUsedCards(char *card, char *arr[])
+{
+    for(int i = 0; i < sizeof(*arr[]); i++)
+    {
         if(*arr[i] == val) return 0;
     }
     return 1;
 }
 
-char deal***() {
-    //dealer recieves 1 card up, 1 down
-    //player recieves 2 cards
-    d_card1 = getcard();  //card, color, val, AceGiven
-    d_card2 = getcard();
-    p_card1 = getcard();
-    p_card2 = getcard();
-    return(p_card1, p_card2, d_card1, d_card2); 
-}
-
-void getcard() {
-    //rand used to generate a face and value of a card in a 52-card deck
-    int suit = rand() % 2 + 1;
-    int val = rand() % 10 + 2;
-    char valf = char(val);
+CardInfo getcard() {
+   
     Cardinfo card;
     card.AceGiven = false;
-
-    if(suit==1) 
-    {
-        char suitchar[6] = SPADE;
-    }
-    else if(suit==2) 
-    {
-        char suitchar[6] = HEART;
-    }
-    else if(suit==3) 
-    {
-        char suitchar[6] = DIAMOND;
-    }
-    else 
-    {
-        char suitchar[6] = CLUB;
-    }
-    if(val==11) 
-    {
-        valf = 'J';
-        val = 10; 
-    }
-    else if(val==12) 
-    {
-        valf = 'Q';
-        val = 10; 
-    }
-    else if(val==13) 
-    {
-        valf = 'K';
-        val = 10; 
-    }
-    else if(val==14) 
-    {
-        valf = 'A';
-        val = 11; 
-        card.AceGiven = true; 
-    }
-    char *card = (char*)malloc(8 * sizeof(char));
-    card.cardstr = ("[%s %s]", valf, suitchar); 
-
+   
+    //rand used to generate a face and value of a card in a 52-card deck
+    int cardNum = rand() % 10 + 2;
+    if(cardNum < 10) { card.face = char(cardNum); card.val = cardNum; }
+    else if(cardNum == 10) { card.face = "10"; card.val = 10; }
+    else if(cradNum == 11) { card.face = 'J'; card.val = 10; }
+    else if(cradNum == 12) { card.face = 'Q'; card.val = 10; }
+    else if(cradNum == 13) { card.face = 'K'; card.val = 10; }
+    else { card.face = 'A'; card.val = 11; card.AceGiven = true; }
+   
+    int suit = rand() % 2 + 1;
+   
+    if(suit==1) { card.suitchar = SPADE; }
+    else if(suit==2) { card.suitchar = HEART; }
+    else if(suit==3) { card.suitchar = DIAMOND; }
+    else { card.suitchar = CLUB; }
+    
     //remove duplicate cards using recursion
-    if(cardNotInUsedCards(*card, **usedcards)) 
+    if(cardNotInUsedCards(card, usedcards)) 
     {
-        usedcards.append(card);
-        snprintf("[%s %s]", valf, suitchar)
+        usedcards.append(card); 
     }
     else 
     {
         getcard(); 
     }
+}
+
+void displayCard(CardInfo card)
+{
+    char *cardStr = (char*)malloc(8 * sizeof(char));
+    snprintf("[%s %s]", valf, suitchar) 
 }
 
 int user_play* (int card1_val, int card2_val, int numAces) {
@@ -335,8 +304,19 @@ int main() {
     char usedcards** = [\0];
     int scoreSheet* = [0,0,0,0];
     int numAces* = [0,0]; //tracks aces for [player, dealer]
-
+    d_card1 = getcard();  //card, color, val, AceGiven
+    d_card2 = getcard();
+    p_card1 = getcard();
+    p_card2 = getcard();
+    usedcards[] = [];
+   
     while(1) {
+        //dealer recieves 1 card up, 1 down
+        //player recieves 2 cards
+        d_card1 = getcard();  //card, color, val, AceGiven
+        d_card2 = getcard();
+        p_card1 = getcard();
+        p_card2 = getcard();
         usedcards[] = [];
         int dealer_score = 0;
         char cards** = deal();
