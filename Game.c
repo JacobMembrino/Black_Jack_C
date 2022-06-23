@@ -36,7 +36,15 @@ void getcard();
 int user_play* (int card1_val, int card2_val, bool numAces);
 int dealer_play* (char card1**, char card2**, int numAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
+int cardNotInUsedCards(char *card, char *arr[]);
 
+int cardNotInUsedCards(char *card, char *arr[]){
+    int i;
+    for(i = 0; i < sizeof(*arr[]); i++){
+        if(*arr[i] == val) return 0;
+    }
+    return 1;
+}
 
 char deal***() {
     //dealer recieves 1 card up, 1 down
@@ -97,14 +105,14 @@ void getcard() {
     card.cardstr = ("[%s %s]", valf, suitchar); 
 
     //remove duplicate cards using recursion
-    if(card not in usedcards) 
+    if(cardNotInUsedCards(*card, **usedcards)) 
     {
         usedcards.append(card);
-        return(card); 
+        snprintf("[%s %s]", valf, suitchar)
     }
     else 
     {
-        return(getcard**()); 
+        getcard(); 
     }
 }
 
