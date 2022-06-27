@@ -25,31 +25,31 @@
 
 //form a struct to hold the characteristics of each card
 typedef struct {
-    char *face[2];
-    char *suitchar[6];
+    char face[2];
+    char suitchar[9];
     int val;
     int AceGiven;
 } CardInfo;
 
-static int *scoresheet = [0,0,0,0];
+static int scoresheet[4] = {0,0,0,0};
 
-int cardNotInUsedCards(char *card, char *arr[]);
-CardInfo getcard();
+int cardNotInUsedCards(CardInfo card, CardInfo usedcards[]);
+CardInfo getcard(UsedCards[]);
 void displayCard(CardInfo card);
 int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 
-int cardNotInUsedCards(char *card, char *arr[])
+int cardNotInUsedCards(CardInfo card, usedcards[])
 {
-    for(int i = 0; i < sizeof(*arr[]); i++)
+    for(int i = 0; i < sizeof(*usedcards[]); i++)
     {
-        if(*arr[i] == val) return 0;
+        if(*usedcards[i] == val) return 0;
     }
     return 1;
 }
 
-CardInfo getcard() 
+CardInfo getcard(UsedCards[]) 
 {
     Cardinfo card;
     card.AceGiven = 0;
@@ -77,17 +77,17 @@ CardInfo getcard()
     }
     else 
     {
-        getcard(); 
+        getcard(UsedCards); 
     }
 }
 
 void displayCard(CardInfo card)
 {
-    char *cardStr = (char*)malloc(8 * sizeof(char));
-    snprintf("\n[%s %s]\n", valf, suitchar) 
+    char *cardStr = (char*)malloc(18 * sizeof(char));
+    snprintf("\n[%s %s]\n", card.face, card.suitchar) 
 }
 
-int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces) 
+int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces) 
 {
     int Aces = PnumAces;
     int total_val = card1_val + card2_val;
@@ -130,7 +130,7 @@ int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
             usleep(Delay*1000);  // sleep for 100 milliSeconds
             #endif
         
-            CardInfo newCard = getcard(); 
+            CardInfo newCard = getcard(UsedCards); 
             displaycard(newCard);
             
             #ifdef _WIN32
@@ -184,7 +184,7 @@ int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
             printf("Enter a valid action\n"); 
         }
     }
-    int *return_list = [total_val, Busted, Nat21];
+    int return_list[3] = [total_val, Busted, Nat21];
     return(return_list);
 }
     
@@ -237,7 +237,7 @@ int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces)
             usleep(Delay*1000);  // sleep for 100 milliSeconds
             #endif
         
-            DnewCard = getcard();
+            DnewCard = getcard(UsedCards);
             displaycard(DnewCard);
             if(DnewCard.AceGiven) { Aces +=1; }
             
@@ -306,22 +306,15 @@ void scoreboard(int u_score, int d_score, int wins, int loses, int nat21s, int b
 
 int main() 
 {
-    CardInfo *UsedCards;
-    int *numAces = [0,0]; //tracks aces for [dealer, player]
-    d_card1 = getcard();  //face, suit, val, AceGiven
-    d_card2 = getcard();
-    p_card1 = getcard();
-    p_card2 = getcard();
-   
     //Gameplay Loop starts here
     while(1) 
     {
-        //dealer recieves 1 card up, 1 down
-        //player recieves 2 cards
-        d_card1 = getcard();  //card, color, val, AceGiven
-        d_card2 = getcard();
-        p_card1 = getcard();
-        p_card2 = getcard();
+        CardInfo UsedCards[sizeof(CardInfo) * 20];
+        int numAces[2] = {0,0}; //tracks aces for [dealer, player]
+        d_card1 = getcard(UsedCards);
+        d_card2 = getcard(UsedCards);
+        p_card1 = getcard(UsedCards);
+        p_card2 = getcard(UsedCards);
     
         printf("******************************\n");
         printf("Dealer's Hand:\n");
