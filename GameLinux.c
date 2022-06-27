@@ -9,7 +9,7 @@
 #include <unistd.h>
 #endif
 
-#define int Delay 1000;
+#define Delay 1000;
 
 #if defined(_WIN32) || defined(__MSDOS__)
    #define SPADE   "\x06"
@@ -24,33 +24,35 @@
 #endif
 
 //form a struct to hold the characteristics of each card
-typedef struct CardInfo {
-    char *face[2];
-    char *suitchar[6];
+typedef struct {
+    char face[2];
+    char suitchar[9];
     int val;
-    bool AceGiven;
+    int AceGiven;
 } CardInfo;
 
-CardInfo getcard();
-void displayCard(CardInfo card);
-int *user_play(int card1_val, int card2_val, bool numAces);
-int *dealer_play(char card1**, char card2**, int numAces);
-void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
-int cardNotInUsedCards(char *card, char *arr[]);
+static int scoresheet[4] = {0,0,0,0};
 
-int cardNotInUsedCards(char *card, char *arr[])
+int cardNotInUsedCards(CardInfo card, CardInfo usedcards[]);
+CardInfo getcard(UsedCards[]);
+void displayCard(CardInfo card);
+int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
+int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces);
+void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
+
+int cardNotInUsedCards(CardInfo card, usedcards[])
 {
-    for(int i = 0; i < sizeof(*arr[]); i++)
+    for(int i = 0; i < sizeof(*usedcards[]); i++)
     {
-        if(*arr[i] == val) return 0;
+        if(*usedcards[i] == val) return 0;
     }
     return 1;
 }
 
-CardInfo getcard() {
-   
+CardInfo getcard(UsedCards[]) 
+{
     Cardinfo card;
-    card.AceGiven = false;
+    card.AceGiven = 0;
    
     //rand used to generate a face and value of a card in a 52-card deck
     int cardNum = rand() % 10 + 2;
@@ -59,7 +61,7 @@ CardInfo getcard() {
     else if(cradNum == 11) { card.face = 'J'; card.val = 10; }
     else if(cradNum == 12) { card.face = 'Q'; card.val = 10; }
     else if(cradNum == 13) { card.face = 'K'; card.val = 10; }
-    else { card.face = 'A'; card.val = 11; card.AceGiven = true; }
+    else { card.face = 'A'; card.val = 11; card.AceGiven = 1; }
    
     int suit = rand() % 2 + 1;
    
@@ -75,21 +77,22 @@ CardInfo getcard() {
     }
     else 
     {
-        getcard(); 
+        getcard(UsedCards); 
     }
 }
 
 void displayCard(CardInfo card)
 {
-    char *cardStr = (char*)malloc(8 * sizeof(char));
-    snprintf("[%s %s]", valf, suitchar) 
+    char *cardStr = (char*)malloc(18 * sizeof(char));
+    snprintf("\n[%s %s]\n", card.face, card.suitchar) 
 }
 
-int user_play* (int card1_val, int card2_val, int numAces) {
-    int Aces = numAces;
+int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces) 
+{
+    int Aces = PnumAces;
     int total_val = card1_val + card2_val;
-    bool Nat21 = false;
-    bool Busted = false;
+    int Nat21 = 0;
+    int Busted = 0;
     
     //check for nat 21
     if(total_val == 21)
@@ -101,7 +104,7 @@ int user_play* (int card1_val, int card2_val, int numAces) {
         #endif
         
         print("\n\nYou Got a Natural 21!!");
-        Nat21 = true;
+        Nat21 = 1;
         
         #ifdef _WIN32
         Sleep(Delay);
@@ -111,7 +114,8 @@ int user_play* (int card1_val, int card2_val, int numAces) {
         
         return(total_val, Busted, Nat21); 
     }
-    
+
+    //start user play
     while(1) 
     {
         printf("\nYou may either: Hit (h) or Stand (s) (score:{total_val}): ");
@@ -120,7 +124,14 @@ int user_play* (int card1_val, int card2_val, int numAces) {
         putchar( inp );
         if(inp == 'h')
         {
-            print();
+            #ifdef _WIN32
+            Sleep(Delay);
+            #else
+            usleep(Delay*1000);  // sleep for 100 milliSeconds
+            #endif
+        
+            CardInfo newCard = getcard(UsedCards); 
+            displaycard(newCard);
             
             #ifdef _WIN32
             Sleep(Delay);
@@ -128,23 +139,11 @@ int user_play* (int card1_val, int card2_val, int numAces) {
             usleep(Delay*1000);  // sleep for 100 milliSeconds
             #endif
         
-            disp* = getcard(); 
-        }
+            if(newCard.AceGiven) { Aces +=1; }
+            total_val += newCard.val;
         
-            if(disp[3]) {Aces +=1;}
-        
-            //displaycard(disp[0], disp[1]);
-            //printf("{" + card + "}\n"); 
-            
-            #ifdef _WIN32
-            Sleep(Delay);
-            #else
-            usleep(Delay*1000);  // sleep for 100 milliSeconds
-            #endif
-        
-            total_val += disp[2];
-        
-            if(total_val > 21 and Aces == 0) {
+            if(total_val > 21 and Aces == 0) 
+            {
                 print(f"\nBUST! ({total_val})\n");
                 
                 #ifdef _WIN32
@@ -153,14 +152,18 @@ int user_play* (int card1_val, int card2_val, int numAces) {
                 usleep(Delay*1000);  // sleep for 100 milliSeconds
                 #endif
                 
-                Busted = true;
+                Busted = 1;
                 total_val = 0;
                 break; 
             }
-            else if(total_val > 21 and Aces > 0) { //count ace as 1
+            else if(total_val > 21 and Aces > 0) 
+            { 
+                //count ace as 1
                 Aces -= 1;
-                total_val -= 10; }
-            else if(total_val == 21) {
+                total_val -= 10; 
+            }
+            else if(total_val == 21) 
+            {
                 print("\nYour Score is 21!!");
                 
                 #ifdef _WIN32
@@ -170,8 +173,7 @@ int user_play* (int card1_val, int card2_val, int numAces) {
                 #endif
                 break; 
             }
-            else {}
-            
+        }
         else if(inp == 's') 
         {
             printf("\nFinal Score: %x\n", total_val);
@@ -181,15 +183,19 @@ int user_play* (int card1_val, int card2_val, int numAces) {
         {
             printf("Enter a valid action\n"); 
         }
-    return(total_val, Busted, Nat21);
     }
+    int return_list[3] = [total_val, Busted, Nat21];
+    return(return_list);
 }
     
-int dealer_play*(char card1**, char card2**, int numAces) 
+int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces) 
 {
-    Aces = numAces;
-    score = card1[2] + card2[2];
-    printf("*"*30);
+    Aces = DnumAces;
+    CardInfo Dealercard1 = Dcard1;
+    CardInfo Dealercard2 = Dcard2;
+    dealer_score = Dcard1.val + Dcard2.val;
+
+    printf("******************************\n");
     
     #ifdef _WIN32
     Sleep(Delay);
@@ -198,25 +204,25 @@ int dealer_play*(char card1**, char card2**, int numAces)
     #endif
     
     printf("\nDealer's Cards:\n");
-    //displaycard(card1[0], card1[1]);
-    //printf("{" + card + "}\n"); 
-    //displaycard(card2[0], card2[1]);
-    //printf("{" + card + "}\n");
-    printf("\n");
-    printf("*"*30);
-    printf();
-    
+    displaycard(Dcard1);
+    displaycard(Dcard2);
+
     #ifdef _WIN32
     Sleep(Delay);
     #else
     usleep(Delay*1000);  // sleep for 100 milliSeconds
     #endif
+
+    printf("******************************\n");
     
-    while(1) {
-        if(score < 21) { //prevents Dealer's score from double printing
-            print(f"Dealer's Score: {score}\n"); }
-        if(score < 17) {
-            
+    while(1) 
+    {
+        if(dealer_score < 21) 
+        { //prevents Dealer's score from double printing
+            print(f"Dealer's Score: {score}\n");
+        }
+        if(dealer_score < 17) 
+        {
             #ifdef _WIN32
             Sleep(Delay);
             #else
@@ -231,11 +237,9 @@ int dealer_play*(char card1**, char card2**, int numAces)
             usleep(Delay*1000);  // sleep for 100 milliSeconds
             #endif
         
-            disp = getcard();
-            if(disp[3]) { Aces +=1; }
-            //displaycard(disp[0], disp[1]);
-            //printf("{" + card + "}\n");
-            print("\n");
+            DnewCard = getcard(UsedCards);
+            displaycard(DnewCard);
+            if(DnewCard.AceGiven) { Aces +=1; }
             
             #ifdef _WIN32
             Sleep(Delay);
@@ -243,9 +247,10 @@ int dealer_play*(char card1**, char card2**, int numAces)
             usleep(Delay*1000);  // sleep for 100 milliSeconds
             #endif
         
-            score += disp[2];
+            dealer_score += DnewCard.val;
         }
-        else if(17<=score<=20) {
+        else if(17 <= dealer_score <=20 ) 
+        {
             
             #ifdef _WIN32
             Sleep(Delay);
@@ -253,7 +258,7 @@ int dealer_play*(char card1**, char card2**, int numAces)
             usleep(Delay*1000);  // sleep for 100 milliSeconds
             #endif
         
-            print("Dealer must stand\n");
+            print("\nDealer must stand\n");
             
             #ifdef _WIN32
             Sleep(Delay);
@@ -263,8 +268,9 @@ int dealer_play*(char card1**, char card2**, int numAces)
         
             break; 
         }
-        else if(score == 21) {
-            print("Dealer got 21!\n");
+        else if(dealer_score == 21) 
+        {
+            print("\nDealer got 21!\n");
             
             #ifdef _WIN32
             Sleep(Delay);
@@ -274,111 +280,107 @@ int dealer_play*(char card1**, char card2**, int numAces)
             
             break; 
         }
-        else if(score > 21 and Aces > 0) 
+        else if(score > 21 & Aces > 0) 
         { 
             Aces -= 1; //count ace as 1
             score -= 10; 
         }
-        else
+        else if(score > 21 & Aces == 0)
         {
             print("Dealer Busts!\n");
-            score = 0;
+            dealer_score = 0;
             break; 
         } 
     }
-    return(score); 
-    }
+    return(dealer_score); 
 }
 
-void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s) 
+void scoreboard(int u_score, int d_score, int wins, int loses, int nat21s, int busts) 
 {
     //scoreboard instance
     printf("------------------------------");
-    printf("User Score: {%d}, Dealer Score: {%d}\n", u_score, d_score);
-    printf("Wins  :{%d} | Loses:{%d}\nNat21s:{%d} | Busts:{%d}\n", wins, loses, nat21s, busts);
+    snprintf("User Score: {%d}, Dealer Score: {%d}\n", u_score, d_score);
+    snprintf("Wins  :{%d} | Loses:{%d}\nNat21s:{%d} | Busts:{%d}\n", wins, loses, nat21s, busts);
     printf("------------------------------");
 }
 
-//Gameplay Loop starts here
-int main() {
-    char usedcards** = [\0];
-    int scoreSheet* = [0,0,0,0];
-    int numAces* = [0,0]; //tracks aces for [player, dealer]
-    d_card1 = getcard();  //card, color, val, AceGiven
-    d_card2 = getcard();
-    p_card1 = getcard();
-    p_card2 = getcard();
-    usedcards[] = [];
-   
-    while(1) {
-        //dealer recieves 1 card up, 1 down
-        //player recieves 2 cards
-        d_card1 = getcard();  //card, color, val, AceGiven
-        d_card2 = getcard();
-        p_card1 = getcard();
-        p_card2 = getcard();
-        usedcards[] = [];
-        int dealer_score = 0;
-        char cards** = deal();
+int main() 
+{
+    //Gameplay Loop starts here
+    while(1) 
+    {
+        CardInfo UsedCards[sizeof(CardInfo) * 20];
+        int numAces[2] = {0,0}; //tracks aces for [dealer, player]
+        d_card1 = getcard(UsedCards);
+        d_card2 = getcard(UsedCards);
+        p_card1 = getcard(UsedCards);
+        p_card2 = getcard(UsedCards);
     
-        printf("******************************");
-        printf("\nDealer's Hand:");
-        //displaycard(cards[2][0], cards[2][1]);
-        //printf("{" + card + "}\n");
+        printf("******************************\n");
+        printf("Dealer's Hand:\n");
+        displaycard(d_card1);
+        printf("[? ?]\n");
 
-        if(cards[2][3] == true or cards[3][3] == true) { numAces[1] += 1; }
-        else if(cards[2][3] == true and cards[3][3] == true) { numAces[1] += 2; }
-        else {}
+        if(d_card1.AceGiven || d_card2.AceGiven) { numAces[0] += 1; }
+        else if(d_card1.AceGiven && d_card2.AceGiven) { numAces[0] += 2; }
 
-        printf("[? ?]");
+        printf("\nPlayer's Hand:\n");
+        displaycard(p_card1);
+        displaycard(p_card2);
 
-        printf("\n\nPlayer's Hand:");
+        if(p_card1.AceGiven || p_card2.AceGiven) { numAces[1] += 1; }
+        else if(p_card1.AceGiven && p_card2.AceGiven) { numAces[1] += 2; }
 
-        //displaycard(cards[0][0], cards[0][1]);
-        //printf("{" + card + "}\n");
-        //displaycard(cards[1][0], cards[1][1]);
-        //printf("{" + card + "}\n\n");
+        printf("******************************\n");
 
-        if(cards[0][3] == true or cards[1][3] == true) { numAces[0] += 1; }
-        else if(cards[0][3] == true and cards[1][3] == true) { numAces[0] += 2; }
-        else {}
-    
         //returns a list containg [score, busted boolean, Nat 21 boolean]
-        user_score = user_play(cards[0][2], cards[1][2], numAces[0]);
+        int *user_score = user_play(p_card1.val, p_card2.val, numAces[1]);
     
-        //skips dealer's play if you bust or get a Natural 21
-        if(user_score[1]) {
+        if(user_score[1]) //you busted, skip dealer play
+        {
             dealer_score = 1;
             scoreSheet[3] += 1;
             scoreSheet[1] += 1;
         }
-        else if(user_score[2]){
-            dealer_score = 0;
-            scoreSheet[2]+=1;
-        }
-        else {
-            dealer_score = dealer_play(cards[2], cards[3], numAces[1]);
-            if (dealer_score > 0) { //No need to print the score if it busts
-                printf("Dealer's Final Score: {dealer_score}\n"); }
-
-            if(dealer_score < user_score[0]){
-                printf("You Win!\n");
-                scoreSheet[0]+=1;}
-            else if(dealer_score > user_score[0]){
-                printf("Dealer Wins!\n");
-                scoreSheet[1]+=1; }
-            else {
-                printf("Tie!!\n"); }
-        }
-        scoreboard(user_score[0], dealer_score, scoreSheet[0], 
-            scoreSheet[1], scoreSheet[3], scoreSheet[2]);
-            
-        printf("\nContinue? (y/n): ");
-        char inp1 = getchar();
-        printf( "\nYou entered: ");
-        putchar( inp1 );
-        while(inp1 != 'n') 
+        else if(user_score[2]) //you got a natural 21, skip dealer play
         {
+            dealer_score = 0;
+            scoreSheet[2] += 1;
+        }
+        else 
+        {
+            int dealer_score = dealer_play(d_card1, d_card2, numAces[0]);
+
+            if(dealer_score > 0) //No need to print the score if it busts
+            {
+                printf("Dealer's Final Score: {dealer_score}\n"); 
+            }
+
+            if(dealer_score < user_score[0])
+            {
+                printf("You Win!\n");
+                scoreSheet[0] += 1;
+            }
+            else if(dealer_score > user_score[0])
+            {
+                printf("Dealer Wins!\n");
+                scoreSheet[1] += 1; 
+            }
+            else 
+            {
+                printf("Tie!!\n"); 
+            }
+        }
+
+        scoreboard(user_score[0], dealer_score, scoreSheet[0], scoreSheet[1], scoreSheet[2], scoreSheet[3]);
+
+        while(1)
+        {
+            printf("\nContinue? (y/n): ");
+            char inp1 = getchar();
+            printf( "\nYou entered: ");
+            putchar( inp1 );
+
             if(inp1 == 'y') 
             {
                 printf("\nStarting New Game...\n");
@@ -388,21 +390,23 @@ int main() {
                 #else
                 usleep(Delay*1000);  // sleep for 100 milliSeconds
                 #endif
-                
-                break; 
+
+                break;
+            }
+            else if(inp1 == 'n') 
+            {
+                printf("Thanks For Playing!\n"); 
+                break;
             }
             else
             {
-                printf("Please enter y/n");
-                char inp1 = getchar();
-                printf( "\nYou entered: ");
-                putchar( inp1 ); 
+                printf("Enter (y/n)");
             }
-        }
-        if(inp1 == 'n') 
+        }  
+        if(inp1 == 'h')
         {
-                printf("Thanks For Playing!\n"); 
-                break;
+            break;
         }
     }
+    return(0);
 }
