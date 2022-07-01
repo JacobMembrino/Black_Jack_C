@@ -2,26 +2,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-
-#ifdef _WIN32
-#include <Windows.h>
-#else
 #include <unistd.h>
-#endif
 
-#define Delay 1000;
-
-#if defined(_WIN32) || defined(__MSDOS__)
-   #define SPADE   "\x06"
-   #define CLUB    "\x05"
-   #define HEART   "\x03"
-   #define DIAMOND "\x04"
-#else
-   #define SPADE   "\xE2\x99\xA0"
-   #define CLUB    "\xE2\x99\xA3"
-   #define HEART   "\xE2\x99\xA5"
-   #define DIAMOND "\xE2\x99\xA6"
-#endif
+#define Delay 100000;
+#define SPADE   "\xE2\x99\xA0"
+#define CLUB    "\xE2\x99\xA3"
+#define HEART   "\xE2\x99\xA5"
+#define DIAMOND "\xE2\x99\xA6"
 
 //form a struct to hold the characteristics of each card
 typedef struct {
@@ -97,21 +84,10 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
     //check for nat 21
     if(total_val == 21)
     {
-        #ifdef _WIN32
-        Sleep(Delay);
-        #else
-        usleep(Delay*1000);  // sleep for 100 milliSeconds
-        #endif
-        
+        usleep(Delay);  // sleep for 100 milliSeconds
         print("\n\nYou Got a Natural 21!!");
         Nat21 = 1;
-        
-        #ifdef _WIN32
-        Sleep(Delay);
-        #else
-        usleep(Delay*1000);  // sleep for 100 milliSeconds
-        #endif
-        
+        usleep(Delay);  // sleep for 100 milliSeconds
         return(total_val, Busted, Nat21); 
     }
 
@@ -124,34 +100,18 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
         putchar( inp );
         if(inp == 'h')
         {
-            #ifdef _WIN32
-            Sleep(Delay);
-            #else
-            usleep(Delay*1000);  // sleep for 100 milliSeconds
-            #endif
-        
+            usleep(Delay);  // sleep for 100 milliSeconds
             CardInfo newCard = getcard(UsedCards); 
             displaycard(newCard);
-            
-            #ifdef _WIN32
-            Sleep(Delay);
-            #else
-            usleep(Delay*1000);  // sleep for 100 milliSeconds
-            #endif
+            usleep(Delay);  // sleep for 100 milliSeconds
         
             if(newCard.AceGiven) { Aces +=1; }
             total_val += newCard.val;
         
             if(total_val > 21 and Aces == 0) 
             {
-                print(f"\nBUST! ({total_val})\n");
-                
-                #ifdef _WIN32
-                Sleep(Delay);
-                #else
-                usleep(Delay*1000);  // sleep for 100 milliSeconds
-                #endif
-                
+                print(f"\nBUST! ({total_val})\n");        
+                usleep(Delay);  // sleep for 100 milliSeconds
                 Busted = 1;
                 total_val = 0;
                 break; 
@@ -165,12 +125,7 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
             else if(total_val == 21) 
             {
                 print("\nYour Score is 21!!");
-                
-                #ifdef _WIN32
-                Sleep(Delay);
-                #else
-                usleep(Delay*1000);  // sleep for 100 milliSeconds
-                #endif
+                usleep(Delay);  // sleep for 100 milliSeconds
                 break; 
             }
         }
@@ -196,88 +151,41 @@ int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces)
     dealer_score = Dcard1.val + Dcard2.val;
 
     printf("******************************\n");
-    
-    #ifdef _WIN32
-    Sleep(Delay);
-    #else
-    usleep(Delay*1000);  // sleep for 100 milliSeconds
-    #endif
-    
+    usleep(Delay);  // sleep for 100 milliSeconds
     printf("\nDealer's Cards:\n");
     displaycard(Dcard1);
     displaycard(Dcard2);
-
-    #ifdef _WIN32
-    Sleep(Delay);
-    #else
-    usleep(Delay*1000);  // sleep for 100 milliSeconds
-    #endif
-
+    usleep(Delay);  // sleep for 100 milliSeconds
     printf("******************************\n");
     
     while(1) 
     {
         if(dealer_score < 21) 
-        { //prevents Dealer's score from double printing
-            print(f"Dealer's Score: {score}\n");
+        {
+            print(f"Dealer's Score: {score}\n"); //prevents Dealer's score from double printing
         }
         if(dealer_score < 17) 
         {
-            #ifdef _WIN32
-            Sleep(Delay);
-            #else
-            usleep(Delay*1000);  // sleep for 100 milliSeconds
-            #endif
-        
+            usleep(Delay);  // sleep for 100 milliSeconds
             print("Dealer must hit\n");
-            
-            #ifdef _WIN32
-            Sleep(Delay);
-            #else
-            usleep(Delay*1000);  // sleep for 100 milliSeconds
-            #endif
-        
+            usleep(Delay);  // sleep for 100 milliSeconds
             DnewCard = getcard(UsedCards);
             displaycard(DnewCard);
             if(DnewCard.AceGiven) { Aces +=1; }
-            
-            #ifdef _WIN32
-            Sleep(Delay);
-            #else
-            usleep(Delay*1000);  // sleep for 100 milliSeconds
-            #endif
-        
+            usleep(Delay);  // sleep for 100 milliSeconds
             dealer_score += DnewCard.val;
         }
         else if(17 <= dealer_score <=20 ) 
         {
-            
-            #ifdef _WIN32
-            Sleep(Delay);
-            #else
-            usleep(Delay*1000);  // sleep for 100 milliSeconds
-            #endif
-        
+            usleep(Delay);  // sleep for 100 milliSeconds
             print("\nDealer must stand\n");
-            
-            #ifdef _WIN32
-            Sleep(Delay);
-            #else
-            usleep(Delay*1000);  // sleep for 100 milliSeconds
-            #endif
-        
+            usleep(Delay);  // sleep for 100 milliSeconds
             break; 
         }
         else if(dealer_score == 21) 
         {
             print("\nDealer got 21!\n");
-            
-            #ifdef _WIN32
-            Sleep(Delay);
-            #else
-            usleep(Delay*1000);  // sleep for 100 milliSeconds
-            #endif
-            
+            usleep(Delay);  // sleep for 100 milliSeconds
             break; 
         }
         else if(score > 21 & Aces > 0) 
@@ -384,13 +292,7 @@ int main()
             if(inp1 == 'y') 
             {
                 printf("\nStarting New Game...\n");
-                
-                #ifdef _WIN32
-                Sleep(Delay);
-                #else
-                usleep(Delay*1000);  // sleep for 100 milliSeconds
-                #endif
-
+                usleep(Delay);  // sleep for 100 milliSeconds
                 break;
             }
             else if(inp1 == 'n') 
