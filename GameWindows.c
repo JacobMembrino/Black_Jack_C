@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <Windows.h>
 
-#define Delay 1000;
+#define Delay 1000
 #define SPADE   "\x06"
 #define CLUB    "\x05"
 #define HEART   "\x03"
@@ -18,10 +18,10 @@ typedef struct{
     int AceGiven;
 } CardInfo;
 
-static int scoresheet[4] = {0,0,0,0};
+static int scoreSheet[4] = {0,0,0,0};
 
 int cardNotInUsedCards(CardInfo card, CardInfo usedcards[]);
-CardInfo getcard(UsedCards[]);
+CardInfo getcard(usedcards[]);
 void displayCard(CardInfo card);
 int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces);
@@ -36,7 +36,7 @@ int cardNotInUsedCards(CardInfo card, usedcards[])
     return 1;
 }
 
-CardInfo getcard(UsedCards[]) 
+CardInfo getcard(usedcards[]) 
 {
     Cardinfo card;
     card.AceGiven = 0;
@@ -71,10 +71,10 @@ CardInfo getcard(UsedCards[])
 void displayCard(CardInfo card)
 {
     char *cardStr = (char*)malloc(18 * sizeof(char));
-    snprintf("\n[%s %s]\n", card.face, card.suitchar) 
+    snprintf("\n[%s %s]\n", card.face, card.suitchar);
 }
 
-int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces) 
+int user_play[3](int Pcard1_val, int Pcard2_val, int PnumAces) 
 {
     int Aces = PnumAces;
     int total_val = card1_val + card2_val;
@@ -147,18 +147,16 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
     
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces) 
 {
-    Aces = DnumAces;
-    CardInfo Dealercard1 = Dcard1;
-    CardInfo Dealercard2 = Dcard2;
-    dealer_score = Dcard1.val + Dcard2.val;
+    int Aces = DnumAces;
+    int dealer_score = Dealercard1.val + Dealercard2.val;
 
     printf("******************************\n");
     
     Sleep(Delay);
     
     printf("\nDealer's Cards:\n");
-    displaycard(Dcard1);
-    displaycard(Dcard2);
+    displayCard(Dealercard1);
+    displayCard(Dealercard2);
 
     Sleep(Delay);
 
@@ -168,16 +166,16 @@ int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces)
     {
         if(dealer_score < 21) 
         { //prevents Dealer's score from double printing
-            print(f"Dealer's Score: {score}\n");
+            printf("Dealer's Score: %x\n", dealer_score);
         }
         if(dealer_score < 17) 
         {
             Sleep(Delay);
-            print("Dealer must hit\n");
+            printf("Dealer must hit\n");
             Sleep(Delay);
         
-            DnewCard = getcard(UsedCards);
-            displaycard(DnewCard);
+            CardInfo DnewCard = getcard(UsedCards);
+            displayCard(DnewCard);
             if(DnewCard.AceGiven) { Aces +=1; }
             
             Sleep(Delay);
@@ -186,24 +184,24 @@ int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces)
         else if(17 <= dealer_score <=20 ) 
         {
             Sleep(Delay);
-            print("\nDealer must stand\n");
+            printf("\nDealer must stand\n");
             Sleep(Delay);
             break; 
         }
         else if(dealer_score == 21) 
         {
-            print("\nDealer got 21!\n");
+            printf("\nDealer got 21!\n");
             Sleep(Delay);
             break; 
         }
-        else if(score > 21 & Aces > 0) 
+        else if(dealer_score > 21 & Aces > 0) 
         { 
             Aces -= 1; //count ace as 1
-            score -= 10; 
+            dealer_score -= 10; 
         }
-        else if(score > 21 & Aces == 0)
+        else if(dealer_score > 21 & Aces == 0)
         {
-            print("Dealer Busts!\n");
+            printf("Dealer Busts!\n");
             dealer_score = 0;
             break; 
         } 
@@ -227,22 +225,22 @@ int main()
     {
         CardInfo UsedCards[sizeof(CardInfo) * 20];
         int numAces[2] = {0,0}; //tracks aces for [dealer, player]
-        d_card1 = getcard(UsedCards);
-        d_card2 = getcard(UsedCards);
-        p_card1 = getcard(UsedCards);
-        p_card2 = getcard(UsedCards);
+        CardInfo d_card1 = getcard(UsedCards);
+        CardInfo d_card2 = getcard(UsedCards);
+        CardInfo p_card1 = getcard(UsedCards);
+        CardInfo p_card2 = getcard(UsedCards);
     
         printf("******************************\n");
         printf("Dealer's Hand:\n");
-        displaycard(d_card1);
+        displayCard(d_card1);
         printf("[? ?]\n");
 
         if(d_card1.AceGiven || d_card2.AceGiven) { numAces[0] += 1; }
         else if(d_card1.AceGiven && d_card2.AceGiven) { numAces[0] += 2; }
 
         printf("\nPlayer's Hand:\n");
-        displaycard(p_card1);
-        displaycard(p_card2);
+        displayCard(p_card1);
+        displayCard(p_card2);
 
         if(p_card1.AceGiven || p_card2.AceGiven) { numAces[1] += 1; }
         else if(p_card1.AceGiven && p_card2.AceGiven) { numAces[1] += 2; }
@@ -250,7 +248,8 @@ int main()
         printf("******************************\n");
 
         //returns a list containg [score, busted boolean, Nat 21 boolean]
-        int *user_score = user_play(p_card1.val, p_card2.val, numAces[1]);
+        int user_score[3] = user_play(p_card1.val, p_card2.val, numAces[1]);
+        int dealer_score = -1;
     
         if(user_score[1]) //you busted, skip dealer play
         {
@@ -265,7 +264,7 @@ int main()
         }
         else 
         {
-            int dealer_score = dealer_play(d_card1, d_card2, numAces[0]);
+            dealer_score = dealer_play(d_card1, d_card2, numAces[0]);
 
             if(dealer_score > 0) //No need to print the score if it busts
             {
@@ -287,16 +286,17 @@ int main()
                 printf("Tie!!\n"); 
             }
         }
-
+        
         scoreboard(user_score[0], dealer_score, scoreSheet[0], scoreSheet[1], scoreSheet[2], scoreSheet[3]);
-
+        
+        char inp1 = 'y';
         while(1)
         {
             printf("\nContinue? (y/n): ");
-            char inp1 = getchar();
+            inp1 = getchar();
             printf( "\nYou entered: ");
             putchar( inp1 );
-
+            
             if(inp1 == 'y') 
             {
                 printf("\nStarting New Game...\n");
@@ -313,7 +313,7 @@ int main()
                 printf("Enter (y/n)");
             }
         }  
-        if(inp1 == 'h')
+        if(inp1 == 'n')
         {
             break;
         }
