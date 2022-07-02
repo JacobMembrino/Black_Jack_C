@@ -18,16 +18,17 @@ typedef struct{
     int AceGiven;
 } CardInfo;
 
-static int scoreSheet[4] = {0,0,0,0};
+static int scoreSheet = {0,0,0,0};
+static CardInfo usedcards[20*sizeof(CardInfo)];
 
-int cardNotInUsedCards(CardInfo card, CardInfo usedcards[]);
-CardInfo getcard(usedcards[]);
+int cardNotInUsedCards(CardInfo card, usedcards);
+CardInfo getcard(usedcards);
 void displayCard(CardInfo card);
 int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 
-int cardNotInUsedCards(CardInfo card, usedcards[])
+int cardNotInUsedCards(CardInfo card, usedcards)
 {
     for(int i = 0; i < sizeof(*usedcards[]); i++)
     {
@@ -36,7 +37,7 @@ int cardNotInUsedCards(CardInfo card, usedcards[])
     return 1;
 }
 
-CardInfo getcard(usedcards[]) 
+CardInfo getcard(usedcards) 
 {
     Cardinfo card;
     card.AceGiven = 0;
@@ -318,5 +319,6 @@ int main()
             break;
         }
     }
+    memset(usedcards, 0, sizeof(usedcards));
     return(0);
 }
