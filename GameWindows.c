@@ -226,7 +226,6 @@ int main()
     //Gameplay Loop starts here
     while(1) 
     {
-        CardInfo UsedCards[sizeof(CardInfo) * 20];
         int numAces[2] = {0,0}; //tracks aces for [dealer, player]
         CardInfo d_card1 = getcard(UsedCards);
         CardInfo d_card2 = getcard(UsedCards);
@@ -236,7 +235,7 @@ int main()
         printf("******************************\n");
         printf("Dealer's Hand:\n");
         displayCard(d_card1);
-        printf("[? ?]\n");
+        printf("\n[? ?]\n");
 
         if(d_card1.AceGiven || d_card2.AceGiven) { numAces[0] += 1; }
         else if(d_card1.AceGiven && d_card2.AceGiven) { numAces[0] += 2; }
@@ -251,7 +250,7 @@ int main()
         printf("******************************\n");
 
         //returns a list containg [score, busted boolean, Nat 21 boolean]
-        int user_score[3] = user_play(p_card1.val, p_card2.val, numAces[1]);
+        int *user_score[3] = user_play(p_card1.val, p_card2.val, numAces[1]);
         int dealer_score = -1;
     
         if(user_score[1]) //you busted, skip dealer play
@@ -271,7 +270,7 @@ int main()
 
             if(dealer_score > 0) //No need to print the score if it busts
             {
-                printf("Dealer's Final Score: {dealer_score}\n"); 
+                printf("Dealer's Final Score: {%d}\n", dealer_score); 
             }
 
             if(dealer_score < user_score[0])
