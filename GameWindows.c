@@ -11,46 +11,46 @@
 #define DIAMOND "\x04"
 
 //form a struct to hold the characteristics of each card
-typedef struct{
+typedef struct CardInfo {
     char face[2];
     char suitchar[9];
     int val;
     int AceGiven;
 } CardInfo;
 
-static int scoreSheet = {0,0,0,0};
+static int scoreSheet[4] = {0,0,0,0};
 volatile static int pos = 0;
 static CardInfo usedcards[20*sizeof(CardInfo)];
 
-int cardNotInUsedCards(CardInfo card, usedcards);
-CardInfo getcard(usedcards);
+int cardNotInUsedCards(CardInfo card, CardInfo usedcards);
+CardInfo getcard(CardInfo usedcards);
 void displayCard(CardInfo card);
 int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 
-int cardNotInUsedCards(CardInfo card, usedcards)
+int cardNotInUsedCards(CardInfo card, CardInfo usedcards)
 {
-    for(int i = 0; i < sizeof(*usedcards[]); i++)
+    for(int i = 0; i < sizeof(*usedcards[]); i += sizeof(CardInfo))
     {
         if(*usedcards[i] == val) { return 0; }
     }
     return 1;
 }
 
-CardInfo getcard(usedcards) 
+CardInfo getcard(CardInfo usedcards) 
 {
-    Cardinfo card;
+    CardInfo card;
     card.AceGiven = 0;
    
     //rand used to generate a face and value of a card in a 52-card deck
     int cardNum = rand() % 10 + 2;
     if(cardNum < 10) { card.face = char(cardNum); card.val = cardNum; }
-    else if(cardNum == 10) { card.face = "10"; card.val = 10; }
-    else if(cradNum == 11) { card.face = 'J'; card.val = 10; }
-    else if(cradNum == 12) { card.face = 'Q'; card.val = 10; }
-    else if(cradNum == 13) { card.face = 'K'; card.val = 10; }
-    else { card.face = 'A'; card.val = 11; card.AceGiven = 1; }
+    else if(cardNum == 10) { card.face = {'1','0'}; card.val = 10; }
+    else if(cardNum == 11) { card.face = {'J','\0'}; card.val = 10; }
+    else if(cardNum == 12) { card.face = {'Q','\0'}; card.val = 10; }
+    else if(cardNum == 13) { card.face = {'K','\0'}; card.val = 10; }
+    else { card.face = {'A','\0'}; card.val = 11; card.AceGiven = 1; }
    
     int suit = rand() % 2 + 1;
    
@@ -60,7 +60,7 @@ CardInfo getcard(usedcards)
     else { card.suitchar = CLUB; }
     
     //remove duplicate cards using recursion
-    if(cardNotInUsedCards(card, usedcards)) 
+    if(cardNotInUsedCards(card, CardInfo usedcards)) 
     {
         usedcards[pos] = card;
         pos += sizeof(card); 
