@@ -19,6 +19,7 @@ typedef struct{
 } CardInfo;
 
 static int scoreSheet = {0,0,0,0};
+volatile static int pos = 0;
 static CardInfo usedcards[20*sizeof(CardInfo)];
 
 int cardNotInUsedCards(CardInfo card, usedcards);
@@ -61,7 +62,8 @@ CardInfo getcard(usedcards)
     //remove duplicate cards using recursion
     if(cardNotInUsedCards(card, usedcards)) 
     {
-        usedcards.append(card); 
+        usedcards[pos] = card;
+        pos += sizeof(card); 
     }
     else 
     {
