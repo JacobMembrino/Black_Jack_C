@@ -18,16 +18,18 @@ typedef struct {
     int AceGiven;
 } CardInfo;
 
-static int scoresheet[4] = {0,0,0,0};
+static int scoresheet = {0,0,0,0};
+volatile static int pos = 0;
+static CardInfo usedcards[20*sizeof(CardInfo)];
 
-int cardNotInUsedCards(CardInfo card, CardInfo usedcards[]);
-CardInfo getcard(UsedCards[]);
+int cardNotInUsedCards(CardInfo card, usedcards);
+CardInfo getcard(usedcards);
 void displayCard(CardInfo card);
 int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 
-int cardNotInUsedCards(CardInfo card, usedcards[])
+int cardNotInUsedCards(CardInfo card, usedcards)
 {
     for(int i = 0; i < sizeof(*usedcards[]); i++)
     {
@@ -36,7 +38,7 @@ int cardNotInUsedCards(CardInfo card, usedcards[])
     return 1;
 }
 
-CardInfo getcard(UsedCards[]) 
+CardInfo getcard(usedcards) 
 {
     Cardinfo card;
     card.AceGiven = 0;
@@ -60,7 +62,8 @@ CardInfo getcard(UsedCards[])
     //remove duplicate cards using recursion
     if(cardNotInUsedCards(card, usedcards)) 
     {
-        usedcards.append(card); 
+        usedcards[pos] = card;
+        pos += sizeof(card);
     }
     else 
     {
@@ -112,6 +115,7 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
             {
                 print(f"\nBUST! ({total_val})\n");        
                 usleep(Delay);  // sleep for 100 milliSeconds
+                
                 Busted = 1;
                 total_val = 0;
                 break; 
@@ -145,47 +149,51 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
     
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces) 
 {
-    Aces = DnumAces;
-    CardInfo Dealercard1 = Dcard1;
-    CardInfo Dealercard2 = Dcard2;
-    dealer_score = Dcard1.val + Dcard2.val;
+    int Aces = DnumAces;
+    int dealer_score = Dealercard1.val + Dealercard2.val;
 
     printf("******************************\n");
-    usleep(Delay);  // sleep for 100 milliSeconds
+    
+    usleep(Delay);
+    
     printf("\nDealer's Cards:\n");
     displaycard(Dcard1);
     displaycard(Dcard2);
-    usleep(Delay);  // sleep for 100 milliSeconds
+    
+    usleep(Delay);
+    
     printf("******************************\n");
     
     while(1) 
     {
         if(dealer_score < 21) 
-        {
-            print(f"Dealer's Score: {score}\n"); //prevents Dealer's score from double printing
+        { //prevents Dealer's score from double printing
+            print(f"Dealer's Score: {score}\n"); 
         }
         if(dealer_score < 17) 
         {
-            usleep(Delay);  // sleep for 100 milliSeconds
+            usleep(Delay);  
             print("Dealer must hit\n");
-            usleep(Delay);  // sleep for 100 milliSeconds
-            DnewCard = getcard(UsedCards);
+            usleep(Delay);
+            
+            CardInfo DnewCard = getcard(UsedCards);
             displaycard(DnewCard);
             if(DnewCard.AceGiven) { Aces +=1; }
-            usleep(Delay);  // sleep for 100 milliSeconds
+            
+            usleep(Delay); 
             dealer_score += DnewCard.val;
         }
         else if(17 <= dealer_score <=20 ) 
         {
-            usleep(Delay);  // sleep for 100 milliSeconds
+            usleep(Delay);
             print("\nDealer must stand\n");
-            usleep(Delay);  // sleep for 100 milliSeconds
+            usleep(Delay);
             break; 
         }
         else if(dealer_score == 21) 
         {
             print("\nDealer got 21!\n");
-            usleep(Delay);  // sleep for 100 milliSeconds
+            usleep(Delay);
             break; 
         }
         else if(score > 21 & Aces > 0) 
@@ -217,17 +225,16 @@ int main()
     //Gameplay Loop starts here
     while(1) 
     {
-        CardInfo UsedCards[sizeof(CardInfo) * 20];
         int numAces[2] = {0,0}; //tracks aces for [dealer, player]
-        d_card1 = getcard(UsedCards);
-        d_card2 = getcard(UsedCards);
-        p_card1 = getcard(UsedCards);
-        p_card2 = getcard(UsedCards);
+        CardInfo d_card1 = getcard(UsedCards);
+        CardInfo d_card2 = getcard(UsedCards);
+        CardInfo p_card1 = getcard(UsedCards);
+        CardInfo p_card2 = getcard(UsedCards);
     
         printf("******************************\n");
         printf("Dealer's Hand:\n");
         displaycard(d_card1);
-        printf("[? ?]\n");
+        printf("\n[? ?]\n");
 
         if(d_card1.AceGiven || d_card2.AceGiven) { numAces[0] += 1; }
         else if(d_card1.AceGiven && d_card2.AceGiven) { numAces[0] += 2; }
@@ -242,7 +249,8 @@ int main()
         printf("******************************\n");
 
         //returns a list containg [score, busted boolean, Nat 21 boolean]
-        int *user_score = user_play(p_card1.val, p_card2.val, numAces[1]);
+        int *user_score[3] = user_play(p_card1.val, p_card2.val, numAces[1]);
+        int dealer_score = -1;
     
         if(user_score[1]) //you busted, skip dealer play
         {
@@ -257,11 +265,11 @@ int main()
         }
         else 
         {
-            int dealer_score = dealer_play(d_card1, d_card2, numAces[0]);
+            dealer_score = dealer_play(d_card1, d_card2, numAces[0]);
 
             if(dealer_score > 0) //No need to print the score if it busts
             {
-                printf("Dealer's Final Score: {dealer_score}\n"); 
+                printf("Dealer's Final Score: {%d}\n", dealer_score);
             }
 
             if(dealer_score < user_score[0])
@@ -282,6 +290,7 @@ int main()
 
         scoreboard(user_score[0], dealer_score, scoreSheet[0], scoreSheet[1], scoreSheet[2], scoreSheet[3]);
 
+        char inp1 = 'y';
         while(1)
         {
             printf("\nContinue? (y/n): ");
@@ -292,7 +301,7 @@ int main()
             if(inp1 == 'y') 
             {
                 printf("\nStarting New Game...\n");
-                usleep(Delay);  // sleep for 100 milliSeconds
+                usleep(Delay);
                 break;
             }
             else if(inp1 == 'n') 
@@ -305,10 +314,11 @@ int main()
                 printf("Enter (y/n)");
             }
         }  
-        if(inp1 == 'h')
+        if(inp1 == 'n')
         {
             break;
         }
     }
+    memset(usedcards, 0, sizeof(usedcards));
     return(0);
 }
