@@ -60,14 +60,14 @@ CardInfo getcard(CardInfo usedcards[])
     else { card.suitchar = CLUB; }
     
     //remove duplicate cards using recursion
-    if(cardNotInUsedCards(card, CardInfo usedcards)) 
+    if(cardNotInUsedCards(card, CardInfo usedcards[])) 
     {
         usedcards[pos] = card;
         pos += sizeof(card); 
     }
     else 
     {
-        getcard(UsedCards); 
+        getcard(CardInfo usedcards[]); 
     }
 }
 
@@ -105,7 +105,7 @@ int user_play[3](int Pcard1_val, int Pcard2_val, int PnumAces)
         if(inp == 'h')
         {
             Sleep(Delay);
-            CardInfo newCard = getcard(UsedCards); 
+            CardInfo newCard = getcard(CardInfo usedcards[]); 
             displaycard(newCard);
             Sleep(Delay);
         
@@ -177,7 +177,7 @@ int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces)
             printf("Dealer must hit\n");
             Sleep(Delay);
             
-            CardInfo DnewCard = getcard(usedcards);
+            CardInfo DnewCard = getcard(CardInfo usedcards[]);
             displayCard(DnewCard);
             if(DnewCard.AceGiven) { Aces +=1; }
             
@@ -216,8 +216,8 @@ void scoreboard(int u_score, int d_score, int wins, int loses, int nat21s, int b
 {
     //scoreboard instance
     printf("------------------------------");
-    snprintf("User Score: {%d}, Dealer Score: {%d}\n", u_score, d_score);
-    snprintf("Wins  :{%d} | Loses:{%d}\nNat21s:{%d} | Busts:{%d}\n", wins, loses, nat21s, busts);
+    snprintf("User Score: {%x}, Dealer Score: {%x}\n", u_score, d_score);
+    snprintf("Wins  :{%x} | Loses:{%x}\nNat21s:{%x} | Busts:{%x}\n", wins, loses, nat21s, busts);
     printf("------------------------------");
 }
 
@@ -227,10 +227,10 @@ int main()
     while(1) 
     {
         int numAces[2] = {0,0}; //tracks aces for [dealer, player]
-        CardInfo d_card1 = getcard(UsedCards);
-        CardInfo d_card2 = getcard(UsedCards);
-        CardInfo p_card1 = getcard(UsedCards);
-        CardInfo p_card2 = getcard(UsedCards);
+        CardInfo d_card1 = getcard(CardInfo usedcards[]);
+        CardInfo d_card2 = getcard(CardInfo usedcards[]);
+        CardInfo p_card1 = getcard(CardInfo usedcards[]);
+        CardInfo p_card2 = getcard(CardInfo usedcards[]);
     
         printf("******************************\n");
         printf("Dealer's Hand:\n");
@@ -250,7 +250,7 @@ int main()
         printf("******************************\n");
 
         //returns a list containg [score, busted boolean, Nat 21 boolean]
-        int *user_score[3] = user_play(p_card1.val, p_card2.val, numAces[1]);
+        int user_score[3] = user_play(p_card1.val, p_card2.val, numAces[1]);
         int dealer_score = -1;
     
         if(user_score[1]) //you busted, skip dealer play
@@ -270,7 +270,7 @@ int main()
 
             if(dealer_score > 0) //No need to print the score if it busts
             {
-                printf("Dealer's Final Score: {%d}\n", dealer_score); 
+                printf("Dealer's Final Score: {%x}\n", dealer_score); 
             }
 
             if(dealer_score < user_score[0])
