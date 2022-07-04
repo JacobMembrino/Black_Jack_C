@@ -12,15 +12,15 @@
 
 //form a struct to hold the characteristics of each card
 typedef struct CardInfo {
-    char face[2];
-    char suitchar[9];
+    char *face[2];
+    char *suitchar[9];
     int val;
     int AceGiven;
 } CardInfo;
 
-volatile static int scoreSheet[4] = {0,0,0,0};
-volatile static int pos = 0;
-volatile static CardInfo usedcards[20*sizeof(CardInfo)];
+static int scoreSheet[4] = {0,0,0,0};
+static int pos = 0;
+static CardInfo usedcards[20];
 
 int cardNotInUsedCards(CardInfo card, CardInfo usedcards[]);
 CardInfo getcard(CardInfo usedcards[]);
@@ -31,11 +31,16 @@ void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int na
 
 int cardNotInUsedCards(CardInfo card, CardInfo usedcards[])
 {
-    for(int i = 0; i < sizeof(*usedcards[]); i += sizeof(CardInfo))
+    int ElementNotPresent = 1;
+    for(int i = 0; i < sizeof(usedcards); i += sizeof(card))
     {
-        if(*usedcards[i] == val) { return 0; }
+        if(usedcards[i].face == card.face && usedcards[i].suitchar == card.suitchar) 
+        { 
+            ElementNotPresent = 0;
+            break; 
+        }
     }
-    return 1;
+    return(ElementNotPresent);
 }
 
 CardInfo getcard(CardInfo usedcards[]) 
@@ -46,7 +51,7 @@ CardInfo getcard(CardInfo usedcards[])
     //rand used to generate a face and value of a card in a 52-card deck
     int cardNum = rand() % 10 + 2;
     if(cardNum < 10) { card.face = char(cardNum); card.val = cardNum; }
-    else if(cardNum == 10) { card.face = {'1','0'}; card.val = 10; }
+    else if(cardNum == 10) { card.face = "10"; card.val = 10; }
     else if(cardNum == 11) { card.face = {'J','\0'}; card.val = 10; }
     else if(cardNum == 12) { card.face = {'Q','\0'}; card.val = 10; }
     else if(cardNum == 13) { card.face = {'K','\0'}; card.val = 10; }
@@ -60,14 +65,14 @@ CardInfo getcard(CardInfo usedcards[])
     else { card.suitchar = CLUB; }
     
     //remove duplicate cards using recursion
-    if(cardNotInUsedCards(card, CardInfo usedcards[])) 
+    if(cardNotInUsedCards(card, usedcards)) 
     {
         usedcards[pos] = card;
         pos += sizeof(card); 
     }
     else 
     {
-        getcard(CardInfo usedcards[]); 
+        getcard(usedcards); 
     }
 }
 
@@ -77,22 +82,23 @@ void displayCard(CardInfo card)
     snprintf("\n[%s %s]\n", card.face, card.suitchar);
 }
 
-int user_play[3](int Pcard1_val, int Pcard2_val, int PnumAces) 
+int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces) 
 {
     int Aces = PnumAces;
-    int total_val = card1_val + card2_val;
+    int total_val = Pcard1_val + Pcard2_val;
     int Nat21 = 0;
     int Busted = 0;
+    int return_list[3];
     
     //check for nat 21
     if(total_val == 21)
     {
         Sleep(Delay);
-        print("\n\nYou Got a Natural 21!!");
+        printf("\n\nYou Got a Natural 21!!");
         Nat21 = 1;
         Sleep(Delay);
-
-        return(total_val, Busted, Nat21); 
+        return_list[3] = {total_val, Busted, Nat21};
+        return(&return_list); 
     }
 
     //start user play
@@ -105,23 +111,23 @@ int user_play[3](int Pcard1_val, int Pcard2_val, int PnumAces)
         if(inp == 'h')
         {
             Sleep(Delay);
-            CardInfo newCard = getcard(CardInfo usedcards[]); 
-            displaycard(newCard);
+            CardInfo newCard = getcard(usedcards); 
+            displayCard(newCard);
             Sleep(Delay);
         
             if(newCard.AceGiven) { Aces +=1; }
             total_val += newCard.val;
         
-            if(total_val > 21 and Aces == 0) 
+            if(total_val > 21 && Aces == 0) 
             {
-                print(f"\nBUST! ({total_val})\n");
+                printf("\nBUST! (%x)\n", total_val);
                 Sleep(Delay);
                 
                 Busted = 1;
                 total_val = 0;
                 break; 
             }
-            else if(total_val > 21 & Aces > 0) 
+            else if(total_val > 21 && Aces > 0) 
             { 
                 //count ace as 1
                 Aces -= 1;
@@ -129,7 +135,7 @@ int user_play[3](int Pcard1_val, int Pcard2_val, int PnumAces)
             }
             else if(total_val == 21) 
             {
-                print("\nYour Score is 21!!");
+                printf("\nYour Score is 21!!");
                 Sleep(Delay);
                 break; 
             }
@@ -144,8 +150,8 @@ int user_play[3](int Pcard1_val, int Pcard2_val, int PnumAces)
             printf("Enter a valid action\n"); 
         }
     }
-    int return_list[3] = [total_val, Busted, Nat21];
-    return(return_list);
+    return_list[3] = {total_val, Busted, Nat21};
+    return(&return_list);
 }
     
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces) 
@@ -177,7 +183,7 @@ int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces)
             printf("Dealer must hit\n");
             Sleep(Delay);
             
-            CardInfo DnewCard = getcard(CardInfo usedcards[]);
+            CardInfo DnewCard = getcard(usedcards);
             displayCard(DnewCard);
             if(DnewCard.AceGiven) { Aces +=1; }
             
@@ -227,10 +233,10 @@ int main()
     while(1) 
     {
         int numAces[2] = {0,0}; //tracks aces for [dealer, player]
-        CardInfo d_card1 = getcard(CardInfo usedcards[]);
-        CardInfo d_card2 = getcard(CardInfo usedcards[]);
-        CardInfo p_card1 = getcard(CardInfo usedcards[]);
-        CardInfo p_card2 = getcard(CardInfo usedcards[]);
+        CardInfo d_card1 = getcard(usedcards);
+        CardInfo d_card2 = getcard(usedcards);
+        CardInfo p_card1 = getcard(usedcards);
+        CardInfo p_card2 = getcard(usedcards);
     
         printf("******************************\n");
         printf("Dealer's Hand:\n");
@@ -250,7 +256,8 @@ int main()
         printf("******************************\n");
 
         //returns a list containg [score, busted boolean, Nat 21 boolean]
-        int user_score[3] = user_play(p_card1.val, p_card2.val, numAces[1]);
+        int *user_score;
+        user_score[3] = user_play(p_card1.val, p_card2.val, numAces[1]);
         int dealer_score = -1;
     
         if(user_score[1]) //you busted, skip dealer play
