@@ -121,7 +121,7 @@ int user_play[3](int Pcard1_val, int Pcard2_val, int PnumAces)
                 total_val = 0;
                 break; 
             }
-            else if(total_val > 21 and Aces > 0) 
+            else if(total_val > 21 & Aces > 0) 
             { 
                 //count ace as 1
                 Aces -= 1;
