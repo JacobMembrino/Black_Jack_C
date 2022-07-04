@@ -176,8 +176,8 @@ int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces)
             Sleep(Delay);
             printf("Dealer must hit\n");
             Sleep(Delay);
-        
-            CardInfo DnewCard = getcard(UsedCards);
+            
+            CardInfo DnewCard = getcard(usedcards);
             displayCard(DnewCard);
             if(DnewCard.AceGiven) { Aces +=1; }
             
