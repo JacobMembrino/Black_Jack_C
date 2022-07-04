@@ -18,18 +18,18 @@ typedef struct CardInfo {
     int AceGiven;
 } CardInfo;
 
-static int scoreSheet[4] = {0,0,0,0};
+volatile static int scoreSheet[4] = {0,0,0,0};
 volatile static int pos = 0;
-static CardInfo usedcards[20*sizeof(CardInfo)];
+volatile static CardInfo usedcards[20*sizeof(CardInfo)];
 
-int cardNotInUsedCards(CardInfo card, CardInfo usedcards);
-CardInfo getcard(CardInfo usedcards);
+int cardNotInUsedCards(CardInfo card, CardInfo usedcards[]);
+CardInfo getcard(CardInfo usedcards[]);
 void displayCard(CardInfo card);
 int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 
-int cardNotInUsedCards(CardInfo card, CardInfo usedcards)
+int cardNotInUsedCards(CardInfo card, CardInfo usedcards[])
 {
     for(int i = 0; i < sizeof(*usedcards[]); i += sizeof(CardInfo))
     {
@@ -38,7 +38,7 @@ int cardNotInUsedCards(CardInfo card, CardInfo usedcards)
     return 1;
 }
 
-CardInfo getcard(CardInfo usedcards) 
+CardInfo getcard(CardInfo usedcards[]) 
 {
     CardInfo card;
     card.AceGiven = 0;
