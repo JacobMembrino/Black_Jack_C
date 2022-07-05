@@ -12,13 +12,13 @@
 
 //form a struct to hold the characteristics of each card
 typedef struct CardInfo {
-    char *face[2];
-    char *suitchar[9];
+    char face[2];
+    char suitchar[9];
     int val;
     int AceGiven;
 } CardInfo;
 
-static int scoreSheet[4] = {0,0,0,0};
+static int scoreSheet[] = {0,0,0,0};
 static int pos = 0;
 static CardInfo usedcards[20];
 
@@ -88,7 +88,7 @@ int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
     int total_val = Pcard1_val + Pcard2_val;
     int Nat21 = 0;
     int Busted = 0;
-    int return_list[3];
+    int return_list[3] = {0,0,0};
     
     //check for nat 21
     if(total_val == 21)
@@ -97,8 +97,10 @@ int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
         printf("\n\nYou Got a Natural 21!!");
         Nat21 = 1;
         Sleep(Delay);
-        return_list[3] = {total_val, Busted, Nat21};
-        return(&return_list); 
+        return_list[0] = total_val; 
+        return_list[1] = Busted; 
+        return_list[2] = Nat21;
+        return(return_list); 
     }
 
     //start user play
@@ -150,8 +152,10 @@ int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
             printf("Enter a valid action\n"); 
         }
     }
-    return_list[3] = {total_val, Busted, Nat21};
-    return(&return_list);
+    return_list[0] = total_val; 
+    return_list[1] = Busted; 
+    return_list[2] = Nat21;
+    return(return_list);
 }
     
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces) 
@@ -256,8 +260,8 @@ int main()
         printf("******************************\n");
 
         //returns a list containg [score, busted boolean, Nat 21 boolean]
-        int *user_score;
-        user_score[3] = user_play(p_card1.val, p_card2.val, numAces[1]);
+        int *user_score[3];
+        user_score = user_play(p_card1.val, p_card2.val, numAces[1]);
         int dealer_score = -1;
     
         if(user_score[1]) //you busted, skip dealer play
