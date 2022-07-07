@@ -88,7 +88,7 @@ int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
     int total_val = Pcard1_val + Pcard2_val;
     int Nat21 = 0;
     int Busted = 0;
-    int return_list[3] = {0,0,0};
+    int return_list[] = {0,0,0};
     
     //check for nat 21
     if(total_val == 21)
@@ -194,7 +194,7 @@ int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces)
             Sleep(Delay);
             dealer_score += DnewCard.val;
         }
-        else if(17 <= dealer_score <=20 ) 
+        else if(17 <= dealer_score <= 20 ) 
         {
             Sleep(Delay);
             printf("\nDealer must stand\n");
@@ -307,7 +307,7 @@ int main()
         {
             printf("\nContinue? (y/n): ");
             inp1 = getchar();
-            printf( "\nYou entered: ");
+            printf("\nYou entered: ");
             putchar( inp1 );
             
             if(inp1 == 'y') 
