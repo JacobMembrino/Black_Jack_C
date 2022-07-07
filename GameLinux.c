@@ -18,12 +18,12 @@ typedef struct {
     int AceGiven;
 } CardInfo;
 
-static int scoresheet = {0,0,0,0};
-volatile static int pos = 0;
-static CardInfo usedcards[20*sizeof(CardInfo)];
+static int scoresheet[] = {0,0,0,0};
+static int pos = 0;
+static CardInfo usedcards[20];
 
-int cardNotInUsedCards(CardInfo card, usedcards);
-CardInfo getcard(usedcards);
+int cardNotInUsedCards(CardInfo card, CardInfo usedcards[]);
+CardInfo getcard(CardInfo usedcards[]);
 void displayCard(CardInfo card);
 int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces);
@@ -31,14 +31,19 @@ void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int na
 
 int cardNotInUsedCards(CardInfo card, usedcards)
 {
-    for(int i = 0; i < sizeof(*usedcards[]); i++)
+    int ElementNotPresent = 1;
+    for(int i = 0; i < sizeof(usedcards); i += sizeof(card))
     {
-        if(*usedcards[i] == val) return 0;
+        if(usedcards[i].face == card.face && usedcards[i].suitchar == card.suitchar) 
+        { 
+            ElementNotPresent = 0;
+            break; 
+        }
     }
-    return 1;
+    return(ElementNotPresent);
 }
 
-CardInfo getcard(usedcards) 
+CardInfo getcard(CardInfo usedcards[]) 
 {
     Cardinfo card;
     card.AceGiven = 0;
@@ -67,7 +72,7 @@ CardInfo getcard(usedcards)
     }
     else 
     {
-        getcard(UsedCards); 
+        getcard(usedcards); 
     }
 }
 
@@ -83,6 +88,7 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
     int total_val = card1_val + card2_val;
     int Nat21 = 0;
     int Busted = 0;
+    int return_list[] = {0,0,0};
     
     //check for nat 21
     if(total_val == 21)
@@ -91,7 +97,10 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
         print("\n\nYou Got a Natural 21!!");
         Nat21 = 1;
         usleep(Delay);  // sleep for 100 milliSeconds
-        return(total_val, Busted, Nat21); 
+        return_list[0] = total_val; 
+        return_list[1] = Busted; 
+        return_list[2] = Nat21;
+        return(return_list);
     }
 
     //start user play
@@ -104,7 +113,7 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
         if(inp == 'h')
         {
             usleep(Delay);  // sleep for 100 milliSeconds
-            CardInfo newCard = getcard(UsedCards); 
+            CardInfo newCard = getcard(usedcards); 
             displaycard(newCard);
             usleep(Delay);  // sleep for 100 milliSeconds
         
@@ -113,7 +122,7 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
         
             if(total_val > 21 and Aces == 0) 
             {
-                print(f"\nBUST! ({total_val})\n");        
+                printf("\nBUST! (%x)\n", total_val);        
                 usleep(Delay);  // sleep for 100 milliSeconds
                 
                 Busted = 1;
@@ -128,7 +137,7 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
             }
             else if(total_val == 21) 
             {
-                print("\nYour Score is 21!!");
+                printf("\nYour Score is 21!!");
                 usleep(Delay);  // sleep for 100 milliSeconds
                 break; 
             }
@@ -143,7 +152,9 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
             printf("Enter a valid action\n"); 
         }
     }
-    int return_list[3] = [total_val, Busted, Nat21];
+    return_list[0] = total_val; 
+    return_list[1] = Busted; 
+    return_list[2] = Nat21;
     return(return_list);
 }
     
@@ -157,8 +168,8 @@ int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces)
     usleep(Delay);
     
     printf("\nDealer's Cards:\n");
-    displaycard(Dcard1);
-    displaycard(Dcard2);
+    displaycard(Dealercard1);
+    displaycard(Dealercard2);
     
     usleep(Delay);
     
@@ -168,31 +179,31 @@ int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces)
     {
         if(dealer_score < 21) 
         { //prevents Dealer's score from double printing
-            print(f"Dealer's Score: {score}\n"); 
+            printf("Dealer's Score: %x\n", dealer_score); 
         }
         if(dealer_score < 17) 
         {
             usleep(Delay);  
-            print("Dealer must hit\n");
+            printf("Dealer must hit\n");
             usleep(Delay);
             
-            CardInfo DnewCard = getcard(UsedCards);
+            CardInfo DnewCard = getcard(usedcards);
             displaycard(DnewCard);
             if(DnewCard.AceGiven) { Aces +=1; }
             
             usleep(Delay); 
             dealer_score += DnewCard.val;
         }
-        else if(17 <= dealer_score <=20 ) 
+        else if(17 <= dealer_score <= 20 ) 
         {
             usleep(Delay);
-            print("\nDealer must stand\n");
+            printf("\nDealer must stand\n");
             usleep(Delay);
             break; 
         }
         else if(dealer_score == 21) 
         {
-            print("\nDealer got 21!\n");
+            printf("\nDealer got 21!\n");
             usleep(Delay);
             break; 
         }
@@ -215,8 +226,8 @@ void scoreboard(int u_score, int d_score, int wins, int loses, int nat21s, int b
 {
     //scoreboard instance
     printf("------------------------------");
-    snprintf("User Score: {%d}, Dealer Score: {%d}\n", u_score, d_score);
-    snprintf("Wins  :{%d} | Loses:{%d}\nNat21s:{%d} | Busts:{%d}\n", wins, loses, nat21s, busts);
+    snprintf("User Score: {%x}, Dealer Score: {%x}\n", u_score, d_score);
+    snprintf("Wins  :{%x} | Loses:{%x}\nNat21s:{%x} | Busts:{%x}\n", wins, loses, nat21s, busts);
     printf("------------------------------");
 }
 
@@ -226,10 +237,10 @@ int main()
     while(1) 
     {
         int numAces[2] = {0,0}; //tracks aces for [dealer, player]
-        CardInfo d_card1 = getcard(UsedCards);
-        CardInfo d_card2 = getcard(UsedCards);
-        CardInfo p_card1 = getcard(UsedCards);
-        CardInfo p_card2 = getcard(UsedCards);
+        CardInfo d_card1 = getcard(usedcards);
+        CardInfo d_card2 = getcard(usedcards);
+        CardInfo p_card1 = getcard(usedcards);
+        CardInfo p_card2 = getcard(usedcards);
     
         printf("******************************\n");
         printf("Dealer's Hand:\n");
@@ -249,7 +260,8 @@ int main()
         printf("******************************\n");
 
         //returns a list containg [score, busted boolean, Nat 21 boolean]
-        int *user_score[3] = user_play(p_card1.val, p_card2.val, numAces[1]);
+        int *user_score[3];
+        user_score = user_play(p_card1.val, p_card2.val, numAces[1]);
         int dealer_score = -1;
     
         if(user_score[1]) //you busted, skip dealer play
@@ -269,7 +281,7 @@ int main()
 
             if(dealer_score > 0) //No need to print the score if it busts
             {
-                printf("Dealer's Final Score: {%d}\n", dealer_score);
+                printf("Dealer's Final Score: {%x}\n", dealer_score);
             }
 
             if(dealer_score < user_score[0])
@@ -295,7 +307,7 @@ int main()
         {
             printf("\nContinue? (y/n): ");
             char inp1 = getchar();
-            printf( "\nYou entered: ");
+            printf("\nYou entered: ");
             putchar( inp1 );
 
             if(inp1 == 'y') 
