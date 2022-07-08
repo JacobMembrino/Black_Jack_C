@@ -12,8 +12,8 @@
 
 //form a struct to hold the characteristics of each card
 typedef struct CardInfo {
-    char face[2];
-    char suitchar[9];
+    char *face[2];
+    char *suitchar[9];
     int val;
     int AceGiven;
 } CardInfo;
@@ -25,7 +25,7 @@ static CardInfo usedcards[20];
 int cardNotInUsedCards(CardInfo card, CardInfo usedcards[]);
 CardInfo getcard(CardInfo usedcards[]);
 void displayCard(CardInfo card);
-int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
+int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 
@@ -50,12 +50,13 @@ CardInfo getcard(CardInfo usedcards[])
    
     //rand used to generate a face and value of a card in a 52-card deck
     int cardNum = rand() % 10 + 2;
+
     if(cardNum < 10) { card.face = char(cardNum); card.val = cardNum; }
     else if(cardNum == 10) { card.face = "10"; card.val = 10; }
-    else if(cardNum == 11) { card.face = {'J','\0'}; card.val = 10; }
-    else if(cardNum == 12) { card.face = {'Q','\0'}; card.val = 10; }
-    else if(cardNum == 13) { card.face = {'K','\0'}; card.val = 10; }
-    else { card.face = {'A','\0'}; card.val = 11; card.AceGiven = 1; }
+    else if(cardNum == 11) { card.face = "J"; card.val = 10; }
+    else if(cardNum == 12) { card.face = "Q"; card.val = 10; }
+    else if(cardNum == 13) { card.face = "K"; card.val = 10; }
+    else { card.face = "A"; card.val = 11; card.AceGiven = 1; }
    
     int suit = rand() % 2 + 1;
    
@@ -78,8 +79,7 @@ CardInfo getcard(CardInfo usedcards[])
 
 void displayCard(CardInfo card)
 {
-    char *cardStr = (char*)malloc(18 * sizeof(char));
-    snprintf("\n[%s %s]\n", card.face, card.suitchar);
+    snprintf("\n[%s %s]\n", &card.face, &card.suitchar);
 }
 
 int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces) 
@@ -100,7 +100,7 @@ int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
         return_list[0] = total_val; 
         return_list[1] = Busted; 
         return_list[2] = Nat21;
-        return(return_list); 
+        return(&return_list); 
     }
 
     //start user play
@@ -155,7 +155,7 @@ int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
     return_list[0] = total_val; 
     return_list[1] = Busted; 
     return_list[2] = Nat21;
-    return(return_list);
+    return(&return_list);
 }
     
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces) 
