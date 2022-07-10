@@ -11,9 +11,9 @@
 #define DIAMOND "\x04"
 
 //form a struct to hold the characteristics of each card
-typedef struct CardInfo {
-    char face[2];
-    char suitchar[9];
+typedef struct CardDetials {
+    char *face[2];
+    char *suitchar[9];
     int val;
     int AceGiven;
 } CardInfo;
@@ -45,31 +45,28 @@ int cardNotInUsedCards(CardInfo card, CardInfo usedcards[])
 
 CardInfo getcard(CardInfo usedcards[]) 
 {
-    CardInfo card;
-    card.AceGiven = 0;
+    CardInfo thiscard;
+    thiscard.AceGiven = 0;
    
     //rand used to generate a face and value of a card in a 52-card deck
     int cardNum = rand() % 10 + 2;
-
-    if(cardNum < 10) { card.face = cardNum; card.val = cardNum; }
-    else if(cardNum == 10) { card.face = "10"; card.val = 10; }
-    else if(cardNum == 11) { card.face = "J"; card.val = 10; }
-    else if(cardNum == 12) { card.face = "Q"; card.val = 10; }
-    else if(cardNum == 13) { card.face = "K"; card.val = 10; }
-    else { card.face = "A"; card.val = 11; card.AceGiven = 1; }
+    thiscard.face = "1";
+    if(cardNum < 10){ thiscard.val = cardNum; }
+    else if(cardNum >= 10 && cardNum <= 13){ thiscard.val = 10; }
+    else {thiscard.val = 11; thiscard.AceGiven = 1; }
    
     int suit = rand() % 2 + 1;
    
-    if(suit==1) { card.suitchar = SPADE; }
-    else if(suit==2) { card.suitchar = HEART; }
-    else if(suit==3) { card.suitchar = DIAMOND; }
-    else { card.suitchar = CLUB; }
+    if(suit==1) { thiscard.suitchar = SPADE; }
+    else if(suit==2) { thiscard.suitchar = HEART; }
+    else if(suit==3) { thiscard.suitchar = DIAMOND; }
+    else { thiscard.suitchar = CLUB; }
     
     //remove duplicate cards using recursion
-    if(cardNotInUsedCards(card, usedcards)) 
+    if(cardNotInUsedCards(thiscard, usedcards)) 
     {
-        usedcards[pos] = card;
-        pos += sizeof(card); 
+        usedcards[pos] = thiscard;
+        pos += sizeof(thiscard); 
     }
     else 
     {
@@ -79,6 +76,7 @@ CardInfo getcard(CardInfo usedcards[])
 
 void displayCard(CardInfo card)
 {
+    card = card;
     snprintf("\n[%s %s]\n", &card.face, &card.suitchar);
 }
 
