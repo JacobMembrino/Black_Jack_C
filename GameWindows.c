@@ -12,8 +12,8 @@
 
 //form a struct to hold the characteristics of each card
 typedef struct CardInfo {
-    char *face[2];
-    char *suitchar[9];
+    char face[2];
+    char suitchar[9];
     int val;
     int AceGiven;
 } CardInfo;
@@ -51,7 +51,7 @@ CardInfo getcard(CardInfo usedcards[])
     //rand used to generate a face and value of a card in a 52-card deck
     int cardNum = rand() % 10 + 2;
 
-    if(cardNum < 10) { card.face = char(cardNum); card.val = cardNum; }
+    if(cardNum < 10) { card.face = cardNum; card.val = cardNum; }
     else if(cardNum == 10) { card.face = "10"; card.val = 10; }
     else if(cardNum == 11) { card.face = "J"; card.val = 10; }
     else if(cardNum == 12) { card.face = "Q"; card.val = 10; }
