@@ -12,8 +12,8 @@
 
 //form a struct to hold the characteristics of each card
 typedef struct {
-    char face[2];
-    char suitchar[9];
+    char *face[2];
+    char *suitchar[9];
     int val;
     int AceGiven;
 } CardInfo;
@@ -50,7 +50,7 @@ CardInfo getcard(CardInfo usedcards[])
    
     //rand used to generate a face and value of a card in a 52-card deck
     int cardNum = rand() % 10 + 2;
-    if(cardNum < 10) { card.face = char(cardNum); card.val = cardNum; }
+    if(cardNum < 10) { card.face = cardNum; card.val = cardNum; }
     else if(cardNum == 10) { card.face = "10"; card.val = 10; }
     else if(cradNum == 11) { card.face = 'J'; card.val = 10; }
     else if(cradNum == 12) { card.face = 'Q'; card.val = 10; }
@@ -106,10 +106,10 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
     //start user play
     while(1) 
     {
-        printf("\nYou may either: Hit (h) or Stand (s) (score:{total_val}): ");
-        char inp = getchar();
+        printf("\nYou may either: Hit (h) or Stand (s) (score:{%x}): ", total_score);
+        char inp = scanf();
         printf( "\nYou entered: ");
-        putchar( inp );
+        printf( "%c", inp );
         if(inp == 'h')
         {
             usleep(Delay);  // sleep for 100 milliSeconds
@@ -306,9 +306,9 @@ int main()
         while(1)
         {
             printf("\nContinue? (y/n): ");
-            char inp1 = getchar();
+            char inp1 = scanf();
             printf("\nYou entered: ");
-            putchar( inp1 );
+            printf("%c", inp1 );
 
             if(inp1 == 'y') 
             {
