@@ -12,8 +12,8 @@
 
 //form a struct to hold the characteristics of each card
 typedef struct CardDetials {
-    char *face[2];
-    char *suitchar[9];
+    char *face;
+    char *suitchar;
     int val;
     int AceGiven;
 } CardInfo;
@@ -86,7 +86,7 @@ int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
     int total_val = Pcard1_val + Pcard2_val;
     int Nat21 = 0;
     int Busted = 0;
-    int return_list[] = {0,0,0};
+    int* return_list = calloc(3, sizeof(int));
     
     //check for nat 21
     if(total_val == 21)
@@ -98,7 +98,7 @@ int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
         return_list[0] = total_val; 
         return_list[1] = Busted; 
         return_list[2] = Nat21;
-        return(&return_list); 
+        return(return_list); 
     }
 
     //start user play
@@ -153,7 +153,7 @@ int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
     return_list[0] = total_val; 
     return_list[1] = Busted; 
     return_list[2] = Nat21;
-    return(&return_list);
+    return(return_list);
 }
     
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces) 
@@ -258,7 +258,7 @@ int main()
         printf("******************************\n");
 
         //returns a list containg [score, busted boolean, Nat 21 boolean]
-        int *user_score[3];
+        int* user_score = calloc(3, sizeof(int));
         user_score = user_play(p_card1.val, p_card2.val, numAces[1]);
         int dealer_score = -1;
     
@@ -330,5 +330,6 @@ int main()
         }
     }
     memset(usedcards, 0, sizeof(usedcards));
+    free(user_score);
     return(0);
 }
