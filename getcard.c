@@ -4,6 +4,9 @@
 #include <time.h>
 #include <Windows.h>
 
+static int pos = 0;
+static CardInfo usedcards[(20*sizeof(CardInfo))];
+
 typedef struct CardDetials {
     char face[3];
     char suitchar[12];
