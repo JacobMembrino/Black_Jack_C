@@ -16,7 +16,7 @@ typedef struct CardDetials {
 
 static int scoreSheet[] = {0,0,0,0};
 static int pos = 0;
-static CardInfo usedcards[20];
+static CardInfo usedcards[(20*sizeof(CardInfo))];
 
 int cardNotInUsedCards(CardInfo card, CardInfo usedcards[]);
 CardInfo getcard(CardInfo usedcards[]);
