@@ -1,19 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
+#include <time.h>
 #include <Windows.h>
 
-#define Delay 1000
-#define SPADE   "\x06"
-#define CLUB    "\x05"
-#define HEART   "\x03"
-#define DIAMOND "\x04"
+#define Delay 1000 //for Sleep()
 
 //form a struct to hold the characteristics of each card
 typedef struct CardDetials {
-    char *face;
-    char *suitchar;
+    char face[3];
+    char suitchar[12];
     int val;
     int AceGiven;
 } CardInfo;
@@ -47,20 +43,29 @@ CardInfo getcard(CardInfo usedcards[])
 {
     CardInfo thiscard;
     thiscard.AceGiven = 0;
-   
-    //rand used to generate a face and value of a card in a 52-card deck
-    int cardNum = rand() % 10 + 2;
-    thiscard.face = "1";
-    if(cardNum < 10){ thiscard.val = cardNum; }
-    else if(cardNum >= 10 && cardNum <= 13){ thiscard.val = 10; }
+    
+    //get face
+    const char *faces[] = {
+        "1","2","3","4","5","6","7","8","9","10",
+        "J","Q","K","A"
+    };
+    int faces_table_size = 14;
+    srand(time(NULL)); //initialize rand
+    face_index = rand() % faces_table_size;
+    thiscard.face = faces[face_index];
+    
+    //get suit
+    const char *suits[] = {
+        "\x03", "\x04", "\x05", "\x06"
+    };
+    int suit_table_size = 4;
+    srand(time(NULL)); //initialize rand
+    thiscard.suitchar = suits[rand() % suit_table_size];
+    
+    //get value based on face
+    if(face_index < 10){ thiscard.val = face_index+1; }
+    else if(face_index >= 10 && face_index < 13){ thiscard.val = 10; }
     else {thiscard.val = 11; thiscard.AceGiven = 1; }
-   
-    int suit = rand() % 2 + 1;
-   
-    if(suit==1) { thiscard.suitchar = SPADE; }
-    else if(suit==2) { thiscard.suitchar = HEART; }
-    else if(suit==3) { thiscard.suitchar = DIAMOND; }
-    else { thiscard.suitchar = CLUB; }
     
     //remove duplicate cards using recursion
     if(cardNotInUsedCards(thiscard, usedcards)) 
