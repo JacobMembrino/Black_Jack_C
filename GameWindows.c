@@ -8,8 +8,8 @@
 
 //form a struct to hold the characteristics of each card
 typedef struct CardDetials {
-    char face[3];
-    char suitchar[12];
+    char *face;
+    char *suitchar;
     int val;
     int AceGiven;
 } CardInfo;
@@ -50,8 +50,8 @@ CardInfo getcard(CardInfo usedcards[])
         "J","Q","K","A"
     };
     int faces_table_size = 14;
-    srand(time(NULL)); //initialize rand
-    face_index = rand() % faces_table_size;
+    srand(time(NULL)); 
+    int face_index = rand() % faces_table_size;
     thiscard.face = faces[face_index];
     
     //get suit
@@ -59,8 +59,9 @@ CardInfo getcard(CardInfo usedcards[])
         "\x03", "\x04", "\x05", "\x06"
     };
     int suit_table_size = 4;
-    srand(time(NULL)); //initialize rand
-    thiscard.suitchar = suits[rand() % suit_table_size];
+    srand(time(NULL)); 
+    int suit_index = rand() % suit_table_size;
+    thiscard.suitchar = suits[suit_index];
     
     //get value based on face
     if(face_index < 10){ thiscard.val = face_index+1; }
@@ -82,7 +83,7 @@ CardInfo getcard(CardInfo usedcards[])
 void displayCard(CardInfo card)
 {
     card = card;
-    snprintf("\n[%s %s]\n", &card.face, &card.suitchar);
+    snprintf("\n[%s %s]\n", card.face, card.suitchar);
 }
 
 int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces) 
@@ -335,6 +336,6 @@ int main()
         }
     }
     memset(usedcards, 0, sizeof(usedcards));
-    free(user_score);
+    //free(*user_score);
     return(0);
 }
