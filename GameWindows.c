@@ -82,8 +82,8 @@ CardInfo getcard(CardInfo usedcards[])
 
 void displayCard(CardInfo card)
 {
-    card = card;
-    snprintf("\n[%s %s]\n", card.face, card.suitchar);
+    display_card = card;
+    snprintf("\n[%s %s]\n", display_card.face, display_card.suitchar);
 }
 
 int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces) 
@@ -111,9 +111,9 @@ int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
     while(1) 
     {
         printf("\nYou may either: Hit (h) or Stand (s) (score:{total_val}): ");
-        char inp = getchar();
-        printf( "\nYou entered: ");
-        putchar( inp );
+        char inp = scanf();
+        printf("\nYou entered: ");
+        printf("%c", inp);
         if(inp == 'h')
         {
             Sleep(Delay);
@@ -230,8 +230,8 @@ void scoreboard(int u_score, int d_score, int wins, int loses, int nat21s, int b
 {
     //scoreboard instance
     printf("------------------------------");
-    snprintf("User Score: {%x}, Dealer Score: {%x}\n", u_score, d_score);
-    snprintf("Wins  :{%x} | Loses:{%x}\nNat21s:{%x} | Busts:{%x}\n", wins, loses, nat21s, busts);
+    printf("User Score: {%x}, Dealer Score: {%x}\n", u_score, d_score);
+    printf("Wins  :{%x} | Loses:{%x}\nNat21s:{%x} | Busts:{%x}\n", wins, loses, nat21s, busts);
     printf("------------------------------");
 }
 
@@ -310,9 +310,9 @@ int main()
         while(1)
         {
             printf("\nContinue? (y/n): ");
-            inp1 = getchar();
+            inp1 = scanf();
             printf("\nYou entered: ");
-            putchar( inp1 );
+            printf("%c", inp1 );
             
             if(inp1 == 'y') 
             {
