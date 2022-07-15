@@ -1,26 +1,22 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
+#include <time.h>
 #include <unistd.h>
 
 #define Delay 100000;
-#define SPADE   "\xE2\x99\xA0"
-#define CLUB    "\xE2\x99\xA3"
-#define HEART   "\xE2\x99\xA5"
-#define DIAMOND "\xE2\x99\xA6"
 
 //form a struct to hold the characteristics of each card
-typedef struct {
-    char *face[2];
-    char *suitchar[9];
+typedef struct CardDetials {
+    char *face;
+    char *suitchar;
     int val;
     int AceGiven;
 } CardInfo;
 
 static int scoresheet[] = {0,0,0,0};
 static int pos = 0;
-static CardInfo usedcards[20];
+static CardInfo usedcards[(20*sizeof(CardInfo))];
 
 int cardNotInUsedCards(CardInfo card, CardInfo usedcards[]);
 CardInfo getcard(CardInfo usedcards[]);
@@ -29,7 +25,7 @@ int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 
-int cardNotInUsedCards(CardInfo card, usedcards)
+int cardNotInUsedCards(CardInfo card, usedcards[])
 {
     int ElementNotPresent = 1;
     for(int i = 0; i < sizeof(usedcards); i += sizeof(card))
@@ -45,30 +41,38 @@ int cardNotInUsedCards(CardInfo card, usedcards)
 
 CardInfo getcard(CardInfo usedcards[]) 
 {
-    Cardinfo card;
-    card.AceGiven = 0;
+    CardInfo thiscard;
+    thiscard.AceGiven = 0;
+    
+    //get face
+    const char *faces[] = {
+        "1","2","3","4","5","6","7","8","9","10",
+        "J","Q","K","A"
+    };
+    int faces_table_size = 14;
+    srand(time(NULL)); 
+    int face_index = rand() % faces_table_size;
+    thiscard.face = faces[face_index];
    
-    //rand used to generate a face and value of a card in a 52-card deck
-    int cardNum = rand() % 10 + 2;
-    if(cardNum < 10) { card.face = cardNum; card.val = cardNum; }
-    else if(cardNum == 10) { card.face = "10"; card.val = 10; }
-    else if(cradNum == 11) { card.face = 'J'; card.val = 10; }
-    else if(cradNum == 12) { card.face = 'Q'; card.val = 10; }
-    else if(cradNum == 13) { card.face = 'K'; card.val = 10; }
-    else { card.face = 'A'; card.val = 11; card.AceGiven = 1; }
-   
-    int suit = rand() % 2 + 1;
-   
-    if(suit==1) { card.suitchar = SPADE; }
-    else if(suit==2) { card.suitchar = HEART; }
-    else if(suit==3) { card.suitchar = DIAMOND; }
-    else { card.suitchar = CLUB; }
+    //get suit
+    const char *suits[] = {
+        "\xE2\x99\xA0", "\xE2\x99\xA3", "\xE2\x99\xA5", "\xE2\x99\xA6"
+    };
+    int suit_table_size = 4;
+    srand(time(NULL)); 
+    int suit_index = rand() % suit_table_size;
+    thiscard.suitchar = suits[suit_index];
+    
+    //get value based on face
+    if(face_index < 10){ thiscard.val = face_index+1; }
+    else if(face_index >= 10 && face_index < 13){ thiscard.val = 10; }
+    else {thiscard.val = 11; thiscard.AceGiven = 1; }
     
     //remove duplicate cards using recursion
-    if(cardNotInUsedCards(card, usedcards)) 
+    if(cardNotInUsedCards(thiscard, usedcards)) 
     {
-        usedcards[pos] = card;
-        pos += sizeof(card);
+        usedcards[pos] = thiscard;
+        pos += sizeof(thiscard);
     }
     else 
     {
@@ -78,17 +82,17 @@ CardInfo getcard(CardInfo usedcards[])
 
 void displayCard(CardInfo card)
 {
-    char *cardStr = (char*)malloc(18 * sizeof(char));
-    snprintf("\n[%s %s]\n", card.face, card.suitchar) 
+    display_card = card
+    snprintf("\n[%s %s]\n", display_card.face, display_card.suitchar) 
 }
 
-int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces) 
+int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces) 
 {
     int Aces = PnumAces;
-    int total_val = card1_val + card2_val;
+    int total_val = Pcard1_val + Pcard2_val;
     int Nat21 = 0;
     int Busted = 0;
-    int return_list[] = {0,0,0};
+    int* return_list = calloc(3, sizeof(int));
     
     //check for nat 21
     if(total_val == 21)
@@ -96,7 +100,7 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
         usleep(Delay);  // sleep for 100 milliSeconds
         print("\n\nYou Got a Natural 21!!");
         Nat21 = 1;
-        usleep(Delay);  // sleep for 100 milliSeconds
+        usleep(Delay);
         return_list[0] = total_val; 
         return_list[1] = Busted; 
         return_list[2] = Nat21;
@@ -108,14 +112,14 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
     {
         printf("\nYou may either: Hit (h) or Stand (s) (score:{%x}): ", total_score);
         char inp = scanf();
-        printf( "\nYou entered: ");
-        printf( "%c", inp );
+        printf("\nYou entered: ");
+        printf("%c", inp);
         if(inp == 'h')
         {
-            usleep(Delay);  // sleep for 100 milliSeconds
+            usleep(Delay);
             CardInfo newCard = getcard(usedcards); 
             displaycard(newCard);
-            usleep(Delay);  // sleep for 100 milliSeconds
+            usleep(Delay);
         
             if(newCard.AceGiven) { Aces +=1; }
             total_val += newCard.val;
@@ -123,7 +127,7 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
             if(total_val > 21 and Aces == 0) 
             {
                 printf("\nBUST! (%x)\n", total_val);        
-                usleep(Delay);  // sleep for 100 milliSeconds
+                usleep(Delay);
                 
                 Busted = 1;
                 total_val = 0;
@@ -138,7 +142,7 @@ int user_play[3] (int Pcard1_val, int Pcard2_val, int PnumAces)
             else if(total_val == 21) 
             {
                 printf("\nYour Score is 21!!");
-                usleep(Delay);  // sleep for 100 milliSeconds
+                usleep(Delay);
                 break; 
             }
         }
@@ -226,8 +230,8 @@ void scoreboard(int u_score, int d_score, int wins, int loses, int nat21s, int b
 {
     //scoreboard instance
     printf("------------------------------");
-    snprintf("User Score: {%x}, Dealer Score: {%x}\n", u_score, d_score);
-    snprintf("Wins  :{%x} | Loses:{%x}\nNat21s:{%x} | Busts:{%x}\n", wins, loses, nat21s, busts);
+    printf("User Score: {%x}, Dealer Score: {%x}\n", u_score, d_score);
+    printf("Wins  :{%x} | Loses:{%x}\nNat21s:{%x} | Busts:{%x}\n", wins, loses, nat21s, busts);
     printf("------------------------------");
 }
 
@@ -260,7 +264,7 @@ int main()
         printf("******************************\n");
 
         //returns a list containg [score, busted boolean, Nat 21 boolean]
-        int *user_score[3];
+        int* user_score = calloc(3, sizeof(int));
         user_score = user_play(p_card1.val, p_card2.val, numAces[1]);
         int dealer_score = -1;
     
@@ -332,5 +336,6 @@ int main()
         }
     }
     memset(usedcards, 0, sizeof(usedcards));
+    //free(*user_score);
     return(0);
 }
