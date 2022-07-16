@@ -59,7 +59,6 @@ CardInfo getcard(CardInfo usedcards[])
         "\xE2\x99\xA0", "\xE2\x99\xA3", "\xE2\x99\xA5", "\xE2\x99\xA6"
     };
     int suit_table_size = 4;
-    srand(time(NULL)); 
     int suit_index = rand() % suit_table_size;
     thiscard.suitchar = suits[suit_index];
     
