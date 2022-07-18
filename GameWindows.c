@@ -27,8 +27,9 @@ void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int na
 
 int cardNotInUsedCards(CardInfo card, CardInfo usedcards[])
 {
+    int size = sizeof usedcards / sizeof usedcards[0];
     int ElementNotPresent = 1;
-    for(int i = 0; i < sizeof(usedcards); i += sizeof(card))
+    for(int i = 0; i < size; i += 1)
     {
         if(usedcards[i].face == card.face && usedcards[i].suitchar == card.suitchar) 
         { 
@@ -45,7 +46,7 @@ CardInfo getcard(CardInfo usedcards[])
     thiscard.AceGiven = 0;
     
     //get face
-    const char *faces[] = {
+    char *faces[] = {
         "1","2","3","4","5","6","7","8","9","10",
         "J","Q","K","A"
     };
@@ -55,7 +56,7 @@ CardInfo getcard(CardInfo usedcards[])
     thiscard.face = faces[face_index];
     
     //get suit
-    const char *suits[] = {
+    char *suits[] = {
         "\x03", "\x04", "\x05", "\x06"
     };
     int suit_table_size = 4;
@@ -81,8 +82,7 @@ CardInfo getcard(CardInfo usedcards[])
 
 void displayCard(CardInfo card)
 {
-    display_card = card;
-    snprintf("\n[%s %s]\n", display_card.face, display_card.suitchar);
+    printf("\n[%s %s]\n", card.face, card.suitchar);
 }
 
 int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces) 
@@ -110,7 +110,8 @@ int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
     while(1) 
     {
         printf("\nYou may either: Hit (h) or Stand (s) (score:{total_val}): ");
-        char inp = scanf();
+        char inp = 'a';
+        scanf("%c", &inp);
         printf("\nYou entered: ");
         printf("%c", inp);
         if(inp == 'h')
@@ -309,7 +310,8 @@ int main()
         while(1)
         {
             printf("\nContinue? (y/n): ");
-            inp1 = scanf();
+            char inp1 = 'a';
+            scanf("%c", &inp1);
             printf("\nYou entered: ");
             printf("%c", inp1 );
             
