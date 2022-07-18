@@ -18,26 +18,26 @@ static int scoreSheet[] = {0,0,0,0};
 static int pos = 0;
 static CardInfo usedcards[(20*sizeof(CardInfo))];
 
-int cardNotInUsedCards(CardInfo card, CardInfo usedcards[]);
+int cardInUsedCards(CardInfo card, CardInfo usedcards[]);
 CardInfo getcard(CardInfo usedcards[]);
 void displayCard(CardInfo card);
 int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 
-int cardNotInUsedCards(CardInfo card, CardInfo usedcards[])
+int cardInUsedCards(CardInfo card, CardInfo arrused[])
 {
-    int size = sizeof usedcards / sizeof usedcards[0];
-    int ElementNotPresent = 1;
-    for(int i = 0; i < size; i += 1)
+    int len = sizeof(*arrused) / sizeof card;
+    int ElementPresent = 0;
+    for(int i = 0; i < len; i += sizeof card)
     {
-        if(usedcards[i].face == card.face && usedcards[i].suitchar == card.suitchar) 
+        if(arrused[i].face == card.face && arrused[i].suitchar == card.suitchar) 
         { 
-            ElementNotPresent = 0;
+            ElementPresent = 1;
             break; 
         }
     }
-    return(ElementNotPresent);
+    return(ElementPresent);
 }
 
 CardInfo getcard(CardInfo usedcards[]) 
@@ -46,7 +46,7 @@ CardInfo getcard(CardInfo usedcards[])
     thiscard.AceGiven = 0;
     
     //get face
-    char *faces[] = {
+    const char *faces[] = {
         "1","2","3","4","5","6","7","8","9","10",
         "J","Q","K","A"
     };
@@ -56,7 +56,7 @@ CardInfo getcard(CardInfo usedcards[])
     thiscard.face = faces[face_index];
     
     //get suit
-    char *suits[] = {
+    const char *suits[] = {
         "\x03", "\x04", "\x05", "\x06"
     };
     int suit_table_size = 4;
@@ -69,14 +69,15 @@ CardInfo getcard(CardInfo usedcards[])
     else {thiscard.val = 11; thiscard.AceGiven = 1; }
     
     //remove duplicate cards using recursion
-    if(cardNotInUsedCards(thiscard, usedcards)) 
+    //if(cardInUsedCards(thiscard, usedcards)) 
+    if(0)
     {
-        usedcards[pos] = thiscard;
-        pos += sizeof(thiscard); 
+        getcard(usedcards); 
     }
     else 
     {
-        getcard(usedcards); 
+        usedcards[pos] = thiscard;
+        pos += sizeof(thiscard); 
     }
 }
 
@@ -235,7 +236,7 @@ void scoreboard(int u_score, int d_score, int wins, int loses, int nat21s, int b
     printf("------------------------------");
 }
 
-int main() 
+int main(void) 
 {
     //Gameplay Loop starts here
     while(1) 
