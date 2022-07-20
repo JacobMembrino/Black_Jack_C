@@ -25,18 +25,19 @@ int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 
-int cardNotInUsedCards(CardInfo card, usedcards[])
+int cardInUsedCards(CardInfo card, CardInfo arrused[])
 {
-    int ElementNotPresent = 1;
-    for(int i = 0; i < sizeof(usedcards); i += sizeof(card))
+    int len = sizeof(*arrused) / sizeof card;
+    int ElementPresent = 0;
+    for(int i = 0; i < len; i += sizeof card)
     {
-        if(usedcards[i].face == card.face && usedcards[i].suitchar == card.suitchar) 
+        if(arrused[i].face == card.face && arrused[i].suitchar == card.suitchar) 
         { 
-            ElementNotPresent = 0;
+            ElementPresent = 1;
             break; 
         }
     }
-    return(ElementNotPresent);
+    return(ElementPresent);
 }
 
 CardInfo getcard(CardInfo usedcards[]) 
@@ -68,21 +69,21 @@ CardInfo getcard(CardInfo usedcards[])
     else {thiscard.val = 11; thiscard.AceGiven = 1; }
     
     //remove duplicate cards using recursion
-    if(cardNotInUsedCards(thiscard, usedcards)) 
+    //if(cardInUsedCards(thiscard, usedcards)) 
+    if(0)
     {
-        usedcards[pos] = thiscard;
-        pos += sizeof(thiscard);
+        getcard(usedcards); 
     }
     else 
     {
-        getcard(usedcards); 
+        usedcards[pos] = thiscard;
+        pos += sizeof(thiscard); 
     }
 }
 
 void displayCard(CardInfo card)
 {
-    display_card = card
-    snprintf("\n[%s %s]\n", display_card.face, display_card.suitchar) 
+    printf("\n[%s %s]\n", card.face, card.suitchar);
 }
 
 int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces) 
@@ -110,7 +111,8 @@ int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces)
     while(1) 
     {
         printf("\nYou may either: Hit (h) or Stand (s) (score:{%x}): ", total_score);
-        char inp = scanf();
+        char inp = 'a';
+        scanf("%c", &inp);
         printf("\nYou entered: ");
         printf("%c", inp);
         if(inp == 'h')
@@ -182,7 +184,7 @@ int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces)
     {
         if(dealer_score < 21) 
         { //prevents Dealer's score from double printing
-            printf("Dealer's Score: %x\n", dealer_score); 
+            printf("Dealer's Score: %d\n", dealer_score); 
         }
         if(dealer_score < 17) 
         {
@@ -229,8 +231,8 @@ void scoreboard(int u_score, int d_score, int wins, int loses, int nat21s, int b
 {
     //scoreboard instance
     printf("------------------------------");
-    printf("User Score: {%x}, Dealer Score: {%x}\n", u_score, d_score);
-    printf("Wins  :{%x} | Loses:{%x}\nNat21s:{%x} | Busts:{%x}\n", wins, loses, nat21s, busts);
+    printf("User Score: {%d}, Dealer Score: {%d}\n", u_score, d_score);
+    printf("Wins  :{%d} | Loses:{%x}\nNat21s:{%d} | Busts:{%x}\n", wins, loses, nat21s, busts);
     printf("------------------------------");
 }
 
@@ -309,7 +311,8 @@ int main()
         while(1)
         {
             printf("\nContinue? (y/n): ");
-            char inp1 = scanf();
+            char inp1 = 'a';
+            scanf("%c", &inp1);
             printf("\nYou entered: ");
             printf("%c", inp1 );
 
