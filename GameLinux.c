@@ -21,7 +21,7 @@ static CardInfo usedcards[(20*sizeof(CardInfo))];
 int cardNotInUsedCards(CardInfo card, CardInfo usedcards[]);
 CardInfo getcard(CardInfo usedcards[]);
 void displayCard(CardInfo card);
-int *user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
+int* user_play(int Pcard1_val, int Pcard2_val, int PnumAces);
 int dealer_play(CardInfo Dealercard1, CardInfo Dealercard2, int DnumAces);
 void scoreboard(int u_score, int d_score, int wins, int loses, int busts, int nat21s);
 
@@ -69,8 +69,8 @@ CardInfo getcard(CardInfo usedcards[])
     else {thiscard.val = 11; thiscard.AceGiven = 1; }
     
     //remove duplicate cards using recursion
-    //if(cardInUsedCards(thiscard, usedcards)) 
-    if(0)
+    int NewCard = cardInUsedCards(thiscard, usedcards);
+    if(NewCard) 
     {
         getcard(usedcards); 
     }
