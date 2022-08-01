@@ -69,8 +69,8 @@ CardInfo getcard(CardInfo usedcards[])
     else {thiscard.val = 11; thiscard.AceGiven = 1; }
     
     //remove duplicate cards using recursion
-    //if(cardInUsedCards(thiscard, usedcards)) 
-    if(0)
+    int NewCard = cardInUsedCards(thiscard, usedcards);
+    if(NewCard) 
     {
         getcard(usedcards); 
     }
